@@ -56,7 +56,7 @@ Maintain physical fitness. We all know physically fit people who sit around shuf
 
 **为什么身体一定要好，比绝大多数人好**
 
-- 精神不佳不可能是大脑单方面造成的，不可能存在身体嫉妒疲劳但头脑精力充沛的情况。
+- 精神不佳不可能是大脑单方面造成的，不可能存在身体极度疲劳但头脑精力充沛的情况。
 - 最后你始终必须有强大的身体来对整个家庭负责
 - 身体越强，你能同时学习的东西越多
 - 没有持久强壮的身体你无法行走世界
@@ -90,7 +90,7 @@ Maintain physical fitness. We all know physically fit people who sit around shuf
 
 -- 卡尔·纽波特，深度工作
 
-Once you take the first step toward your dream, put your full effort into it. Do your homework. If you want to succeed, you must never neglect it. My most successful investments were those in which I invested the most time and hard work, collecting all available information and researching every detail. If you don't understand something--I mean truly understdand it--you will never be successful. Likewise, if you merely dabble in an area, you are gambling, not investing.
+Once you take the first step toward your dream, put your full effort into it. Do your homework. If you want to succeed, you must never neglect it. My most successful investments were those in which I invested the most time and hard work, collecting all available information and researching every detail. If you don't understand something--I mean truly understand it--you will never be successful. Likewise, if you merely dabble in an area, you are gambling, not investing.
 
 -- Jim Rogers, A gift to my children--A father's lessons for life and investing
 
@@ -109,7 +109,6 @@ Once you take the first step toward your dream, put your full effort into it. Do
 心流状态的漏斗形状与你自身的能力相关，我们用x轴表示，你可以看出，拥有的能力越高，你进入心流状态的概率就越高。
 
 --丹尼尔·列维汀， 有序
-
 
 为什么从编程开始？
 
@@ -180,8 +179,6 @@ https://launchschool.com/pedagogy
 
 ### 4 为什么从长期来看需要国际化
 
-
-
 ### 5 为什么要离开这里
 
 Unless we manipulate our surroundings, we have as little control over what and whom we think about as we do over the muscles of our hearts.
@@ -204,7 +201,7 @@ Leonardo da Vinci: Just as a well-filled day brings blessed sleep, so a well-emp
 环境
 
 - 不可预知的打扰
-- 乞讨者长时间，大声播放音响
+- 长时间，大声播放音响
 - 吸烟者
 
 
@@ -408,7 +405,7 @@ I want you to pursue, without pause, whatever it is that stirs your passion. Kee
 -- Nicholas Carr, The Shallows
 
 
-Whenever possible, avoid teachers and supervisors who are highly critical in a negative sense. Telling peoeple what they're doing wrong while ignoring what they're doing right reduces their energy. When it's your turn to teach or supervise or give adivce, you might try the following approach: "Here's what I like about what you're doing, and here's how you might improve it."
+Whenever possible, avoid teachers and supervisors who are highly critical in a negative sense. Telling people what they're doing wrong while ignoring what they're doing right reduces their energy. When it's your turn to teach or supervise or give advice, you might try the following approach: "Here's what I like about what you're doing, and here's how you might improve it."
 
 -- George Leonard. Mastery: The Keys to Success and Long-Term Fulfillment
 
@@ -431,7 +428,6 @@ Whenever possible, avoid teachers and supervisors who are highly critical in a n
 锻炼身体。
 
 定期接触自然。
-
 
 ## 那些每年都应该重读的书
 
