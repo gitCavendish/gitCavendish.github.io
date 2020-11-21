@@ -7,7 +7,6 @@ tags:
   - brain
   - reading notes
 layout: post
-
 ---
 
 一本关于大脑可塑性的科普书，此书从知识层面和生活层面都给予了我很大帮助。
