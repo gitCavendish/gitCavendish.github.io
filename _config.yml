@@ -19,7 +19,7 @@ skin: "/assets/css/skins/dark.css"
 locale: en-US
 title: "Xullnn's words"
 description: "You can't do much carpentry with your bare hands and you can't do much thinking with your bare brain."
-baseurl: # the subpath of your site, e.g. "/blog"
+baseurl: ""
 # url: https://xullnn.github.io
 logo: # path of site logo, e.g. "/images/logo.png"
 date_format: "%B %-d, %Y"
