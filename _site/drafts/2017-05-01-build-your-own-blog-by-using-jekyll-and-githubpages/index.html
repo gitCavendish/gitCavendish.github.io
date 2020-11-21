@@ -1,0 +1,207 @@
+<p>如何写作才不背离写作的初衷？—— 只管写而不用担心太多其他问题，或者被写作以外无关的事物分心。</p>
+
+<p>blog平台的种类很多，但我们不知道它们能存在多久，如果资料丢失了怎么办？我想自定义文章页面样式可以吗？为什么不能很好地支持markdown语法？</p>
+
+<p><strong>jekyll较好地处理了这些问题。</strong></p>
+
+<h3 id="什么是jekyll">什么是<a href="https://github.com/jekyll">jekyll</a>?</h3>
+
+<ul>
+  <li><a href="http://jekyllcn.com">中文说明</a></li>
+  <li><a href="https://jekyllrb.com">英文说明</a></li>
+</ul>
+
+<p>简单的说就是一个博客的构架，他可以帮你把文字转换为html页面，有css文件夹让你自定义页面样式，可以调整layout等等，感觉上和一个rails的专案有几分相似，但它要简单得多。看不太明白没关系，用起来之后不用解释都会明白的。</p>
+
+<h3 id="step-1-到你的github上建立一个用于github-pages的仓库">Step 1 到你的Github上建立一个用于Github Pages的仓库</h3>
+
+<p>你可以在上<a href="https://pages.github.com">Github Pages的主页</a>根据提示操作，<strong>要注意第一步里面仓库的命名规定！仓库名称必须是：username.github.io</strong>。</p>
+
+<blockquote>
+  <p>Head over to GitHub and create a new repository named username.github.io, where username is your username (or organization name) on GitHub.</p>
+</blockquote>
+
+<blockquote>
+  <blockquote>
+    <p>If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.</p>
+  </blockquote>
+</blockquote>
+
+<h3 id="step-2-在本地用jekyll建立你的blog文件夹">Step 2 在本地用jekyll建立你的blog文件夹</h3>
+
+<p>1.选择好你本地的文件夹路径。</p>
+
+<p>2.在terminal中执行 <code class="language-plaintext highlighter-rouge">gem install jekyll bundler</code> ，会出现类似画面：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo ⮀ gem install jekyll bundler
+Successfully installed jekyll-3.4.3
+Parsing documentation for jekyll-3.4.3
+Done installing documentation for jekyll after 1 seconds
+Successfully installed bundler-1.14.6
+Parsing documentation for bundler-1.14.6
+Done installing documentation for bundler after 3 seconds
+2 gems installed
+</span></code></pre></div></div>
+
+<p>3.用jekyll生成你的blog文件夹，执行 <code class="language-plaintext highlighter-rouge">jekyll new my-blog</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo ⮀ jekyll new my-blog
+Running bundle install in /</span><span class="no">Users</span><span class="o">/</span><span class="n">caven</span><span class="o">/</span><span class="n">demo</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">blog</span><span class="o">...</span>
+ <span class="no">Bundler</span><span class="p">:</span> <span class="no">The</span> <span class="n">dependency</span> <span class="n">tzinfo</span><span class="o">-</span><span class="n">data</span> <span class="p">(</span><span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">will</span> <span class="n">be</span><span class="o">......</span>
+ <span class="p">.</span>
+ <span class="nf">.</span>
+ <span class="o">.</span>
+<span class="no">New</span> <span class="n">jekyll</span> <span class="n">site</span> <span class="n">installed</span> <span class="k">in</span> <span class="sr">/Users/</span><span class="n">caven</span><span class="o">/</span><span class="n">demo</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">blog</span><span class="o">.</span>
+</code></pre></div></div>
+
+<p>4.进入你的blog文件夹， <code class="language-plaintext highlighter-rouge">cd my-blog</code></p>
+
+<p>5.执行 <code class="language-plaintext highlighter-rouge">bundle install</code> 安装gem</p>
+
+<p>6.<code class="language-plaintext highlighter-rouge">git init</code> 接着 <code class="language-plaintext highlighter-rouge">git add .</code> 存入本地git进度 <code class="language-plaintext highlighter-rouge">git commit -m "Successfully build my-blog folder"</code></p>
+
+<p><strong>这样就在本地建立好了blog专案文件夹。</strong></p>
+
+<h3 id="step-3-本地预览你的blog页面">Step 3 本地预览你的blog页面</h3>
+
+<p>在终端执行 <code class="language-plaintext highlighter-rouge">jekyll s</code> 就可以让你的blog在本地跑起来了，下面会给你地址（一般会是：http://localhost:4000）。点进去就可以看到blog的主页了！默认的原始页面是这样的：</p>
+
+<p><img src="/photos/postimages/屏幕快照 2017-05-02 下午1.36.34.png" alt="" /></p>
+
+<h3 id="step-4-将进度push到git-pages的仓库并查看blog网址">Step 4 将进度push到Git pages的仓库并查看blog网址</h3>
+<p>先去你刚刚新建的Git pages的仓库取得仓库地址，然后 <code class="language-plaintext highlighter-rouge">git remote add origin xxxxxxx仓库地址xxxxxxx.git</code> 将远端地址设置好，接着<code class="language-plaintext highlighter-rouge">git push origin master</code></p>
+
+<p>完成后到https://username.github.io/ (username就是你的git用户名) 就可以进入你的blog主页。</p>
+
+<p>以后你写了新文章也是这样操作就可以更新你的blog</p>
+
+<h3 id="step-5-如何写文章">Step 5 如何写文章</h3>
+
+<p>终端<code class="language-plaintext highlighter-rouge">atom .</code> 打开文件夹可以看到这样的结构</p>
+
+<p><img src="/photos/postimages/Snip20170502_6.png" alt="" /></p>
+
+<p><strong>格式要求：</strong></p>
+
+<p><strong>_posts/</strong> 目录下用于存放文章，文章格式将是 <strong>markdown</strong>,每篇文章会有一个这样格式的 head :</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">---</span>
+<span class="ss">layout: </span><span class="n">post</span>
+<span class="ss">title:  </span><span class="s2">"Welcome to Jekyll!"</span>
+<span class="ss">date:   </span><span class="mi">2017</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mo">01</span> <span class="mi">09</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">46</span> <span class="o">+</span><span class="mi">0800</span>
+<span class="ss">categories: </span><span class="n">jekyll</span> <span class="n">update</span>
+<span class="o">---</span>
+</code></pre></div></div>
+
+<p>这些内容会自动以一定格式在文章页面或者文章列表页面显示。不一定只是这四项内容，可能还有tags等内容，也可能不会写layout，这取决于你的需求，后面会提到。但格式都是上下三个短破折号包裹。</p>
+
+<p><strong>文章文件命名方式：</strong></p>
+
+<p>文章应该以 <strong>2017-05-01-post-title.markdown</strong> 这样的方式命名，才能正常地生成文章网址。</p>
+
+<p><strong>用markdown语法写文章：</strong></p>
+
+<p>我们在_posts/路径下写的文章会被自动转译成html文件并放到_site/文件路径下的某个地方，然后再呈现在网页上。</p>
+
+<p><img src="/photos/postimages/Snip20170502_9.png" alt="" /></p>
+
+<p>atom里保存后可以在本地看到主页已经有了新文章的链接。</p>
+
+<p><img src="/photos/postimages/Snip20170502_10.png" alt="" /></p>
+
+<p>点进去看：</p>
+
+<p><img src="/photos/postimages/Snip20170502_11.png" alt="" /></p>
+
+<p><strong>到这里，你应该大概知道jekyll和Github pages是怎么配合工作来生成blog的了。简而言之就是jekyll以一个构架来帮你转译文章，Github pages为你提供服务器支持。</strong></p>
+
+<h3 id="step-6-配置你的blog">Step 6 配置你的blog</h3>
+
+<p><strong>配置文件是_config.yml</strong>，你可以<a href="http://jekyllcn.com/docs/configuration/">按照说明</a>在这里修改blog的配置。</p>
+
+<hr />
+
+<p><strong>到这里已经说完了jekyll的基本用法，不过这个blog的结构只是最基本的。呈现出来的也是很基础的版面，你肯定会想要一些自定义的主题或者加入自己想要的某些效果。如果你很生猛的话，可以找到放css的文件（此例中是my-blog/_site/assets/main.css），然后开始一个个改。还记得前面说的jekyll会帮我们把markdown文档转换成html页面吗？转译后的html样式就是由这里来控制的，如果你想修改某一部分的样式，可以先到转译的html文件中定位到具体的tag或者class,然后到css文件中改。除非你对这部分内容很熟，而且设计功底不错，想做一个独一无二的blog，如果不是的话我认为去套用一个现有的theme然后再在css中进行部分修改是更加可行的办法。</strong></p>
+
+<p><strong>我们理解了jekyll的基本运作原理之后，再来套用theme就容易多了。</strong></p>
+
+<hr />
+
+<h3 id="套用主题theme">套用主题theme</h3>
+
+<blockquote>
+  <p>先说说theme如何起作用。既然基本原理还是用jekyll和Github pages配合，那么框架上就会基本一致。所有的主题都是建立起一个jekyll能够运作的文件结构，然后在 css（甚至加入js） 文件中勾勒出页面样式。也许从文件结构上会多出一些文件夹/文件，但只要jekyll能够识别并使用就没有问题。</p>
+</blockquote>
+
+<p><strong>使用一个theme就是从网上把他下下来，直接把他作为你blog的文件夹，你仍然也是在/_posts/路径下写文章，任然是push到你建立的github pages的仓库地址。唯一可能多做的就是也许你想去改他的css样式。其他完全一样。</strong></p>
+
+<h4 id="1-下载主题">1. 下载主题</h4>
+
+<p>可以找到<a href="https://jekyllthemes.io">一个提供jekyll theme的网站</a>，有的主题是收费的，有的是免费的。接着下载这个theme,比如：</p>
+
+<p><img src="/photos/postimages/Snip20170502_19.png" alt="" /></p>
+
+<p>下载到本地的可能是个压缩文件，也可能直接是个文件夹，总之打开后会发现里面的文件结构跟之前我们  <code class="language-plaintext highlighter-rouge">jekyll new</code> 建立起来的文件夹很像，但通常带主题的文件夹里面内容会多一些。</p>
+
+<p>比如上面那个theme下载到本地直接是个文件夹：
+<img src="/photos/postimages/屏幕快照 2017-05-02 下午8.23.33.png" alt="" /></p>
+
+<p>对比下文件结构：</p>
+
+<p><img src="/photos/postimages/Snip20170502_21.png" alt="" /></p>
+
+<h4 id="2-使用主题">2. 使用主题</h4>
+
+<p>首先你可以给这个文件夹改个名称，放到你电脑中合适的位置。<strong>写文章仍然是在/_posts/路径下，文件格式命名要求也一样。</strong></p>
+
+<p>记得<code class="language-plaintext highlighter-rouge">git init</code>， 然后到你的github上取得blog的git地址，然后加到这个主题文件夹中，写好文章后，push到GitHub就可以了。</p>
+
+<h4 id="3-调整css样式">3. 调整css样式</h4>
+
+<p>首先找到放css的文件,可能不同主题会有所不同。以这个主题为例：</p>
+
+<p><img src="/photos/postimages/Snip20170502_22.png" alt="" /></p>
+
+<p>找到后就可以按照自己的需要进行修改了。</p>
+
+<h4 id="4-调整整体布局">4. 调整整体布局</h4>
+
+<p><strong>可以看到有个layout文件夹，里面会对不同页面的整体排版进行控制，通常layout里面的文件还会使用 include xxx.html 这样的语句来引用 _includes/路径下的html文件，这些可以慢慢探索，关系也不复杂。</strong></p>
+
+<p><img src="/photos/postimages/Snip20170502_24.png" alt="" /></p>
+
+<h4 id="5-修改配置">5. 修改配置</h4>
+
+<p>仍然是在 _ config.yml 中修改配置。具体各项配置的作用可以查询<a href="http://jekyllcn.com/docs/configuration/">jekyll主页</a>或者<a href="https://help.github.com/categories/customizing-github-pages/">GitHub Pages 上对jekyll的补充说明。</a></p>
+
+<h4 id="6-push到你的github-pages的仓库">6. push到你的github pages的仓库</h4>
+
+<p>在push之前，可以先在 terminal 中跑 <code class="language-plaintext highlighter-rouge">jekyll s</code> 然后在 http://localhost:4000 预览下页面， 修改完成后再进行push操作。</p>
+
+<hr />
+
+<h3 id="使用jekyll主题的其他方式">使用jekyll主题的其他方式</h3>
+
+<p>1.主题作为gem安装（不建议）</p>
+
+<blockquote>
+  <p>因为这个方式是在已有的blog构架上新增，可能会出现新theme和原来的构架有冲突的情况，这里只是作为介绍，但不建议使用。</p>
+</blockquote>
+
+<p>上面是一种比较手动的方式，还有一种将主题作为gem来进行“安装”的方式。</p>
+
+<p>这种方式先要建立起一个基本的jekyll blog构架，也就是一开始说的使用 <code class="language-plaintext highlighter-rouge">jekyll new</code> 生成的构架，然后找到gemfile, 在里面加入主题的gem 接着安装使用。</p>
+
+<p>举个简单的例子，还是在最先的那个 my-blog 文件夹中，我们想使用这个主题：https://mmistakes.github.io/minimal-mistakes/</p>
+
+<p><a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/">按照作者在这个页面的引导</a>，进行后续操作。</p>
+
+<p>2.直接去github上拉取主题</p>
+
+<p>其实这种方式跟下载的方式本质上相同，也是拿到文件夹，然后自己修改，push到自己的仓库。</p>
+
+<hr />
+
+<h4 id="总结">总结：</h4>
+
+<p>只要理解了jekyll怎么工作，套用主题，修改样式和布局就比较容易了。不过这套系统还是只适用于有一点编程基础的朋友使用，假如连markdown是什么，html，css是什么，本地跑服务器这些基础概念都不明白的话，使用起来可能还是比较困难。</p>

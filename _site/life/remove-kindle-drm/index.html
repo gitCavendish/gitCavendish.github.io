@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Remove drm from kindle | Xullnn’s words</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Remove drm from kindle" />
+<meta name="author" content="Xullnn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="记录如何使用 calibre 插件移除从kindle购买的电子图书的加密设置，以便使用 calibre 转换为 epub 等其他格式。" />
+<meta property="og:description" content="记录如何使用 calibre 插件移除从kindle购买的电子图书的加密设置，以便使用 calibre 转换为 epub 等其他格式。" />
+<link rel="canonical" href="http://localhost:4000/life/remove-kindle-drm/" />
+<meta property="og:url" content="http://localhost:4000/life/remove-kindle-drm/" />
+<meta property="og:site_name" content="Xullnn’s words" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-15T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Remove drm from kindle" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@Xullnn" />
+<script type="application/ld+json">
+{"datePublished":"2018-05-15T00:00:00+08:00","headline":"Remove drm from kindle","dateModified":"2018-05-15T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/life/remove-kindle-drm/"},"url":"http://localhost:4000/life/remove-kindle-drm/","author":{"@type":"Person","name":"Xullnn"},"description":"记录如何使用 calibre 插件移除从kindle购买的电子图书的加密设置，以便使用 calibre 转换为 epub 等其他格式。","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/dark.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Xullnn&#39;s words" href="/atom.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  remove-drm-from-kindle">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Xullnn's words</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">You can't do much carpentry with your bare hands and you can't do much thinking with your bare brain.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Remove drm from kindle
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><img src="/images/2020.jpg" class="author-avatar u-photo" alt="Xullnn"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Xullnn</span>
+      </div><ul class="author-links"><li class="author-link">
+            <a class="u-url" rel="me" href=""><i class="fas fa-link fa-lg" title=""></i></a>
+          </li></ul>
+
+<span class="read-time">~1 min read</span>
+
+    <time class="page-date dt-published" datetime="2018-05-15T00:00:00+08:00"><a class="u-url" href="">May 15, 2018</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#life" title="Pages filed under Life">Life</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#ebook-decryption" title="Pages tagged ebook decryption" rel="tag">ebook decryption</a></li><li class="page-taxonomy"><a href="/tags/#kindle" title="Pages tagged kindle" rel="tag">kindle</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <p>记录如何使用 calibre 插件移除从kindle购买的电子图书的加密设置，以便使用 calibre 转换为 epub 等其他格式。</p>
+
+<p>原因：</p>
+<ul>
+  <li>不适应kindle的阅读器界面和操作</li>
+  <li>习惯了系统自带的ibook，自动在不同设备之间同步，增加其他的阅读器只会增加管理书籍的难度</li>
+</ul>
+
+<hr />
+
+<h4 id="1-下载-calibre-安装">1 下载 calibre 安装</h4>
+
+<p>https://calibre-ebook.com/</p>
+
+<h4 id="2-将kindle-for-mac-降级">2 将kindle for mac 降级</h4>
+
+<p>这一步很有必要，因为amazon经常会更新 kindle 阅读器，带上一些新的图书格式，有时插件进度跟不上就会导致解密失败。</p>
+
+<p>目前是建议降级到 1.17</p>
+
+<p>http://www.mediafire.com/file/8facwgnzbgar55z/KindleForMac-44173.dmg</p>
+
+<p>然后在阅读器设置里关掉自动升级，每次打开app会有提醒让你升级，不要点。</p>
+
+<h4 id="3-给calibre安装解码插件">3 给calibre安装解码插件</h4>
+
+<p>https://www.epubor.com/3-ways-to-remove-drm-from-kindle-books.html#M1</p>
+
+<p>按照介绍安装。</p>
+
+<p>插件作者的blog, 有很多详细的文字介绍，以及相关主题的其他内容。</p>
+
+<p>https://apprenticealf.wordpress.com/</p>
+
+<h4 id="4-从操作系统中找到图书存储位置">4 从操作系统中找到图书存储位置</h4>
+
+<p>在mac中通常是，/Users/user_name/Library/Application Support/Kindle/My Kindle Content</p>
+
+<p>将图书拖到 calibre 中，处理过程中就自动解密了，之后就可以使用 calibre 的格式转换进行操作。</p>
+
+<h4 id="5-总结">5 总结</h4>
+
+<p>要点是：</p>
+
+<ul>
+  <li>保持旧版的kindle 阅读器版本。</li>
+  <li>关注插件的更新情况，通常新版会更好用或支持新的文件格式。</li>
+  <li>支持正版，与其google上到处搜罗免费电子书，不如认真选书，买好书，支持作者，把更多精力用在阅读而不是淘免费书上面。</li>
+</ul>
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Flife%2Fremove-kindle-drm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Remove+drm+from+kindle%20http%3A%2F%2Flocalhost%3A4000%2Flife%2Fremove-kindle-drm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Flife%2Fremove-kindle-drm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Remove+drm+from+kindle&url=http%3A%2F%2Flocalhost%3A4000%2Flife%2Fremove-kindle-drm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/work/chapter11-where-to-go-next/">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> 
+  
+    
+      Algorithms 101 - 11 - where to go next
+      further learning
+    
+  
+
+
+      </span>
+    </a>
+  
+
+  
+    <a class="page-next" href="/life/treat-your-own-neck/">
+      <h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">
+        Treat your own neck
+ <i class="fas fa-arrow-right"></i>
+      </span>
+    </a>
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="/atom.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2020 Xullnn's words. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>

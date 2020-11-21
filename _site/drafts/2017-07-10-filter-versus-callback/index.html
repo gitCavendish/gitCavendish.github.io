@@ -1,0 +1,69 @@
+<p>此问题源自对 :before_action 和 :before_create 二者区别的查究。</p>
+
+<p><strong>简言之 <code class="language-plaintext highlighter-rouge">:before_action</code> 这类被称为 <a href="http://guides.rubyonrails.org/action_controller_overview.html#filters">Filter</a>。 <code class="language-plaintext highlighter-rouge">:before_create</code> 这类被称为 <a href="http://guides.rubyonrails.org/active_record_callbacks.html">Callback</a>。</strong></p>
+
+<p>Rails Guide 中的说明：</p>
+
+<ul>
+  <li>Filter
+    <blockquote>
+      <p>Filters are methods that are run “before”, “after” or “around” a controller action.</p>
+    </blockquote>
+  </li>
+  <li>Callback
+    <blockquote>
+      <p>Callbacks are methods that get called at certain moments of an object’s life cycle. With callbacks it is possible to write code that will run whenever an Active Record object is created, saved, updated, deleted, validated, or loaded from the database.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<p>Filter 强调的是在调用一个 method 之前或之后使用某个 method, 使用上偏“外围”。</p>
+
+<p>Callbacks 强调的是 在对特定对象进行 create, save, update … 等操作的生命周期（或理解为完成过程）中，在某一特定步骤(at certain moments) 进行某个操作。</p>
+
+<p>一个不精确但易于从概念上理解的说法是：filter 发生在 method 外，callback 发生在 method 内。</p>
+
+<p>Filter 最常见的就是 before_action, Callback的分类和形式更多：</p>
+
+<p><strong><a href="http://guides.rubyonrails.org/active_record_callbacks.html#available-callbacks">Available Callbacks</a></strong> <br />
+Here is a list with all the available Active Record callbacks, listed in the same order in which they will get called during the respective operations.注意这里列出的callbacks考虑了实际情况中可以被唤起的时间点或说具体步骤。</p>
+
+<h4 id="1-creating-an-object">1 Creating an Object</h4>
+<ul>
+  <li>before_validation</li>
+  <li>after_validation</li>
+  <li>before_save</li>
+  <li>around_save</li>
+  <li>before_create</li>
+  <li>around_create</li>
+  <li>after_create</li>
+  <li>after_save</li>
+  <li>after_commit/after_rollback</li>
+</ul>
+
+<h4 id="2-updating-an-object">2 Updating an Object</h4>
+<ul>
+  <li>before_validation</li>
+  <li>after_validation</li>
+  <li>before_save</li>
+  <li>around_save</li>
+  <li>before_update</li>
+  <li>around_update</li>
+  <li>after_update</li>
+  <li>after_save</li>
+  <li>after_commit/after_rollback</li>
+</ul>
+
+<h4 id="3-destroying-an-object">3 Destroying an Object</h4>
+<ul>
+  <li>before_destroy</li>
+  <li>around_destroy</li>
+  <li>after_destroy</li>
+  <li>after_commit/after_rollback</li>
+</ul>
+
+<h4 id="4-after_initialize-and-after_find">4 after_initialize and after_find</h4>
+
+<h4 id="5-after_touch">5 after_touch</h4>
+
+<p>以上具体用法参考rails guide中的说明，guide中也列出了<a href="http://guides.rubyonrails.org/active_record_callbacks.html#running-callbacks">哪些 method 中可以触发或说接入 callback</a> ，或说提供了使用 callback 的接口。</p>

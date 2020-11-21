@@ -1,0 +1,310 @@
+<p>上传附件如图片到专案是道跳不过的题，我将在这篇文章中梳理：</p>
+
+<p>1 Rails中，如何上传多张图片给指定model；</p>
+
+<p>2 如何在view页面呼叫出想要的图片。</p>
+
+<hr />
+
+<h4 id="准备工作">准备工作：</h4>
+
+<ul>
+  <li>安装 <a href="https://github.com/minimagick/minimagick">gem ‘mini_magick’</a>
+(后面使用carrierwave上传附件时会用到这个gem)。</li>
+</ul>
+
+<p><strong>说明：</strong></p>
+
+<blockquote>
+  <p>假设我现在有一个名为<strong>product</strong>的model，它有title,description等栏位，我的目的是要让每个product都能<strong>上传多张图片</strong>，并能够方便地<strong>管理和调用</strong>。</p>
+</blockquote>
+
+<h4 id="step-1-安装-carrierwave">step 1 安装 carrierwave</h4>
+
+<blockquote>
+  <p>carrierwave是用来上传图片的gem套件, <a href="https://github.com/carrierwaveuploader/carrierwave">github上对其使用方法有详细的说明</a>。</p>
+</blockquote>
+
+<p>在gemfile中加入：</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'carrierwave'</span>
+</code></pre></div></div>
+
+<p>然后<code class="language-plaintext highlighter-rouge">bundle</code>，重开 server</p>
+
+<h4 id="step-2-生成-uploader">step 2 生成 uploader</h4>
+
+<blockquote>
+  <p>注意，这一步要在安装carrierwave之后才能成功执行。</p>
+</blockquote>
+
+<p>终端执行 <code class="language-plaintext highlighter-rouge">rails g uploader box</code> (box是上传接口的名称，可以自己修改)</p>
+
+<p><code class="language-plaintext highlighter-rouge">rails g model photo product_id:integer insert:string</code>  这一步是在生成一个名为photo的中间model来专门存储图片，然后用一个string类型的栏位”insert”来作为上传文件的储存池。嵌入product_id是为了让每一个photo都能与特定的product对上号，为后面调用附件做准备。</p>
+
+<p><code class="language-plaintext highlighter-rouge">rake db:migrate</code></p>
+
+<h4 id="step-3-将uploader的接口挂到目标model的目标column上">step 3 将uploader的接口挂到目标model的目标column上</h4>
+
+<ul>
+  <li><strong>app/models/photo.rb</strong></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mount_uploader</span> <span class="ss">:insert</span><span class="p">,</span> <span class="no">BoxUploader</span>  <span class="c1">#将BoxUploader这个上传接口挂到photo的insert栏位上</span>
+<span class="n">belongs_to</span> <span class="ss">:product</span>
+</code></pre></div></div>
+<p>这样我们就能通过carrierwave的uploader接口BoxUploader将附件上传到<strong>photo的 insert 栏位</strong>中</p>
+
+<h4 id="step-4-建立product和photo的资料关系">step 4 建立product和photo的资料关系</h4>
+
+<ul>
+  <li><strong>app/models/product.rb</strong></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">has_many</span> <span class="ss">:photos</span><span class="p">,</span> <span class="ss">dependent: :destroy</span> <span class="c1">#这样product就能通过photos拥有很多附件，当一个product对象被删除时，与之关联的photo也会一并被删除</span>
+<span class="n">accepts_nested_attributes_for</span> <span class="ss">:photos</span> <span class="c1">#这一行是为了让rails在product的form页面接受并放行photo栏位中的资料，不然上传的图片会被挡掉。</span>
+</code></pre></div></div>
+
+<h4 id="step-5-到uploader的rb文件中设置文件上传过程中的处理流程">step 5 到uploader的rb文件中设置文件上传过程中的处理流程</h4>
+
+<blockquote>
+  <p>uploader.rb文件会告诉rails文件上传时:</p>
+  <ul>
+    <li>需要接入的其他gem</li>
+    <li>存储地点是在本地还是云端</li>
+    <li>存储前文件裁切成什么尺寸（尺寸名称会在view页面被用到）</li>
+    <li>更多的用法参考<a href="https://github.com/carrierwaveuploader/carrierwave">carrierwave的github地址</a></li>
+  </ul>
+</blockquote>
+
+<p>在这个例子中，我们这样设置。</p>
+
+<ul>
+  <li><strong>app/uploaders/box_uploader.rb</strong></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">......</span>
+  <span class="kp">include</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">MiniMagick</span>  <span class="c1"># 这里需要用到准备工作中安装的MiniMagick</span>
+
+  <span class="n">storage</span> <span class="ss">:file</span> <span class="c1">#说明文件存储在本地</span>
+
+  <span class="k">def</span> <span class="nf">store_dir</span>  <span class="c1"># 设置存储路径，以及路径名称的规划，前面省略了app/public/</span>
+    <span class="s2">"uploads/</span><span class="si">#{</span><span class="n">model</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class="nf">underscore</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">mounted_as</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">model</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+
+  <span class="c1"># model.class.to_s.underscore 其实是将 被上传文件的model的class名称（这个例子中是Photo）转换成string字串的小写格式，所以到这里是： uploads/photo/</span>
+  <span class="c1"># mounted_as 是 挂上传接口个那个栏位的名称，这个例子中是 insert ,所以到这里是：uploads/photo/insert/</span>
+  <span class="c1"># model.id 是 存储图片的这个model的id, 其实一个photo对象只存储了一张图（的多个version）所以如果你给一个product传了3张图，其实会生成3个新的photo对象用来存储这3张图片的裁切后的版本格式。所以到这里: uploads/photo/insert/:id/</span>
+
+  <span class="c1"># 最终我们得到的能直接面对图片的路径会是: uploads/photo/insert/:id/一张图的多个version。 实际的情况可能是</span>
+  <span class="c1">#  uploads/photo/insert/1/</span>
+      <span class="c1">#  - iamgesample.jpg</span>
+      <span class="c1">#  - full_imagesample.jpg</span>
+      <span class="c1">#  - medium_imagesample.jpg</span>
+      <span class="c1">#  - small_imagesample.jpg</span>
+      <span class="c1">#  - minimal_imagesample.jpg</span>
+
+  <span class="c1">#  uploads/photo/insert/2/</span>
+  <span class="c1">#  ...</span>
+
+
+  <span class="c1"># 下面的full, medium, small, minimal是自定的图片预处理尺寸，这里设置了4个自定义尺寸，但最后每一张图片会被存储5张在指定文件夹中,有4张分别对应这里的尺寸，另外张就是原图，如果想要在上传过程中就约束原图大小，可以加一行： process resize_to_fill: [1200, 1200,] ，这样原图会被裁成这个尺寸，然后在此基础上再去裁切生成不同的version.</span>
+  <span class="n">version</span> <span class="ss">:full</span> <span class="k">do</span>
+    <span class="n">process</span> <span class="ss">resize_to_fill: </span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">,]</span>
+  <span class="k">end</span>
+
+  <span class="n">version</span> <span class="ss">:medium</span> <span class="k">do</span>
+    <span class="n">process</span> <span class="ss">resize_to_fill: </span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="n">version</span> <span class="ss">:small</span> <span class="k">do</span>
+    <span class="n">process</span> <span class="ss">resize_to_fill: </span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="n">version</span> <span class="ss">:minimal</span> <span class="k">do</span>
+    <span class="n">process</span> <span class="ss">resize_to_fill: </span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+  <span class="k">end</span>
+
+</code></pre></div></div>
+
+<h4 id="step-6-增加上传文件的栏位到-productsnew--edit-页面">step 6 增加上传文件的栏位到 /products/new &amp; edit 页面</h4>
+
+<p>添加这行代码到需要的位置：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">%= simple_form_for @produt do |product| %&gt;
+  ......
+  &lt;%=</span> <span class="n">product</span><span class="p">.</span><span class="nf">file_field</span> <span class="ss">:box</span><span class="p">,</span> <span class="ss">multiple: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">name: </span><span class="s2">"photos[box][]"</span><span class="o">%&gt;</span>
+
+<span class="o">&lt;</span><span class="sx">% end </span><span class="o">%&gt;</span>
+
+</code></pre></div></div>
+
+<h4 id="step-7-到products_controller中修改new和create和show和update">step 7 到products_controller中修改new和create和show和update</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">new</span>
+    <span class="vi">@prodcut</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">new</span>                 
+    <span class="vi">@photos</span>  <span class="o">=</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">new</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">create</span>
+    <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">product_params</span><span class="p">)</span>  
+
+    <span class="k">if</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">save</span>                        
+
+        <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="ss">:photos</span><span class="p">]</span> <span class="o">!=</span> <span class="kp">nil</span>
+            <span class="n">params</span><span class="p">[</span><span class="ss">:photos</span><span class="p">][</span><span class="ss">:box</span><span class="p">].</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+                <span class="vi">@photos</span> <span class="o">=</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">:insert</span> <span class="o">=&gt;</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">end</span>       
+        <span class="k">end</span>
+
+        <span class="n">redirect_to</span> <span class="n">admin_products_path</span>     
+    <span class="k">else</span>                                    
+        <span class="n">render</span> <span class="ss">:new</span>                         
+    <span class="k">end</span>                                     
+<span class="k">end</span>                                         
+
+<span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>    
+    <span class="vi">@photos</span>  <span class="o">=</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">all</span> <span class="c1"># 这样在单个product的show页面才能调用到这个product的所有图片</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">update</span>  
+  <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="ss">:photos</span><span class="p">]</span> <span class="o">!=</span> <span class="kp">nil</span>
+         <span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">destroy_all</span>
+
+          <span class="n">params</span><span class="p">[</span><span class="ss">:photos</span><span class="p">][</span><span class="ss">:box</span><span class="p">].</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+              <span class="vi">@photos</span> <span class="o">=</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">:insert</span> <span class="o">=&gt;</span> <span class="n">i</span><span class="p">)</span>
+          <span class="k">end</span>
+
+          <span class="vi">@product</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="n">product_params</span><span class="p">)</span>
+          <span class="n">redirect_to</span> <span class="n">admin_products_path</span>
+
+  <span class="k">elsif</span>   <span class="vi">@product</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="n">product_params</span><span class="p">)</span>
+          <span class="n">redirect_to</span> <span class="n">admin_products_path</span>
+  <span class="k">else</span>
+          <span class="n">render</span> <span class="ss">:edit</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="如何在view页面调用文件">如何在view页面调用文件</h3>
+
+<p>到此, controller中的部分就完成了，下面说说怎么在不同的页面调用这些图片。</p>
+
+<p>在调用页面，我们通常会用到不同图片的不同尺寸，之前uploarder.rb已经帮我们处理好了尺寸问题，而使用photo这个中间model的用意是让我们使用索引（index）来更准确地管理和调用我们想要的图片。如果我们不建立中间model，直接给product增加一个photo的column用来存储图片，carrierwave也是可以实现的，但当我们需要更准确地管理这些文件时，这种方式就不那么灵了。</p>
+
+<p>还记得product <code class="language-plaintext highlighter-rouge">has_many :photos</code> &amp; photo <code class="language-plaintext highlighter-rouge">belongs_to :product</code> 吗
+我们将配合索引(index)来调用, 假设我新建了我的第10个product,并给它上传了10张图片，这会生成10个新的photo对象，那么这个product自己的id是10, 10个photo对象的id可能是101,102,..,110(这取决于你之前所有商品总共上传了多少张图片，每一张占用一个photo_id)，这10个photo都有一个相同的外部键product_id = 10, product(10)会has这10个photo对象，并对他们生成索引分别是0，1，2,..,9 。第一张图对应0，第二张图对应1，第三张图对应2…。</p>
+
+<blockquote>
+  <p>明显调用图片的位置有：</p>
+  <ul>
+    <li>products/:id/  调用单个product图片</li>
+    <li>products/      调用所有products的图片</li>
+    <li>products/:id/edit/  可能会想要显示单个product已经存在的图片</li>
+  </ul>
+</blockquote>
+
+<h4 id="productsid-页面调用">products/:id/ 页面调用</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">% if </span><span class="vi">@photos</span><span class="p">.</span><span class="nf">present?</span> <span class="sx">%&gt;  
+
+    &lt;% @photos.each_with_index do |photo, index| %&gt;</span>
+        <span class="o">&lt;</span><span class="n">td</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="sx">% if </span><span class="n">index</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">%&gt;</span>       <span class="c1"># 定义第一张图片的调用尺寸</span>
+            <span class="o">&lt;</span><span class="sx">%= image_tag photo.insert.medium.url %&gt;
+            &lt;% elsif index =</span><span class="o">=</span> <span class="mi">1</span> <span class="o">%&gt;</span>    <span class="c1"># 定义第一张图片的调用尺寸</span>
+            <span class="o">&lt;</span><span class="sx">%= image_tag photo.insert.small.url %&gt;
+            &lt;% else %&gt;                # 定义其余图片的调用尺寸
+            &lt;%=</span> <span class="n">image_tag</span> <span class="n">photo</span><span class="p">.</span><span class="nf">insert</span><span class="p">.</span><span class="nf">minimal</span><span class="p">.</span><span class="nf">url</span><span class="o">%&gt;</span>
+            <span class="o">&lt;</span><span class="sx">% end </span><span class="o">%&gt;</span>
+        <span class="o">&lt;</span><span class="sr">/td&gt;
+    &lt;% end %&gt;
+
+&lt;% else %&gt;
+
+        &lt;td&gt;
+            &lt;%= image_tag("http:/</span><span class="o">/</span><span class="n">placehold</span><span class="p">.</span><span class="nf">it</span><span class="o">/</span><span class="mi">400</span><span class="n">x400</span><span class="o">&amp;</span><span class="n">text</span><span class="o">=</span><span class="no">No</span> <span class="no">Pic</span><span class="s2">", class: "</span><span class="n">thumbnail</span><span class="s2">") %&gt;
+        &lt;/td&gt;
+
+&lt;% end %&gt;
+</span></code></pre></div></div>
+
+<p>来看看调用的效果:</p>
+
+<p><img src="/photos/postimages/call images-s.jpg" alt="" /></p>
+
+<h4 id="products-页面调用">products/ 页面调用</h4>
+
+<p>这个页面可能需要分别调用不同product的指定图片，比如我们想要调用每个product的第一张图的最小尺寸</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="n">td</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="sx">%= link_to product_path(p) do %&gt;
+        &lt;% if p.photos.present? %&gt;
+            &lt;%=</span> <span class="n">image_tag</span><span class="p">(</span><span class="nb">p</span><span class="p">.</span><span class="nf">photos</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">insert</span><span class="p">.</span><span class="nf">minimal</span><span class="p">.</span><span class="nf">url</span><span class="p">)</span> <span class="o">%&gt;</span>  <span class="c1"># 调用index==0的最小尺寸的图</span>
+        <span class="o">&lt;</span><span class="sx">% else </span><span class="o">%&gt;</span>
+            <span class="o">&lt;</span><span class="nb">p</span> <span class="n">style</span><span class="o">=</span><span class="s2">"height: 50px;"</span><span class="o">&gt;</span><span class="no">NO</span> <span class="no">Photos</span><span class="o">&lt;</span><span class="sr">/p&gt;
+        &lt;% end %&gt;
+    &lt;% end %&gt;
+&lt;/</span><span class="n">td</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>效果会是这样：</p>
+
+<p><img src="/photos/postimages/Snip20170422_1.png" alt="" /></p>
+
+<h4 id="productsidedit-页面调用">products/:id/edit 页面调用</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">% if </span><span class="vi">@product</span><span class="p">.</span><span class="nf">photos</span><span class="p">.</span><span class="nf">present?</span> <span class="sx">%&gt;
+      &lt;p&gt;</span><span class="n">current</span> <span class="n">photos</span><span class="ss">:&lt;</span><span class="o">/</span><span class="nb">p</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="sx">% @product.photos.each </span><span class="k">do</span> <span class="o">|</span><span class="n">photo</span><span class="o">|</span> <span class="sx">%&gt; # 这里调用了此product的所有图片
+          &lt;%= image_tag photo.insert.minimal.url %&gt;</span>
+      <span class="o">&lt;</span><span class="sx">% end </span><span class="o">%&gt;</span>
+
+<span class="o">&lt;</span><span class="sx">% else </span><span class="o">%&gt;</span>
+
+      <span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="no">No</span> <span class="n">photos</span><span class="o">&lt;</span><span class="sr">/p&gt;
+
+&lt;% end %&gt;
+
+&lt;br&gt;
+&lt;%= product.file_field :box, multiple: true, name: "photos[box][]"%&gt;
+
+</span></code></pre></div></div>
+
+<p>调用效果如下</p>
+
+<p><img src="/photos/postimages/Snip20170422_3.png" alt="" /></p>
+
+<hr />
+
+<h3 id="图片被存在了哪里">图片被存在了哪里？</h3>
+
+<blockquote>
+  <p>此案例中我们在uploader.rb中把存储地址设为了本地，图片会默认在app/public/uploads下</p>
+</blockquote>
+
+<p><img src="/photos/postimages/dir.jpg" alt="" /></p>
+
+<hr />
+
+<blockquote>
+  <p><strong>总结:</strong></p>
+</blockquote>
+
+<blockquote>
+  <p>carrierwave其实已经把上传文件的流程帮我们处理得相当简单和直观，这里的关键在于建立一个中间model用来专门存储上传文件，另一个目的是能够利用生成的索引来调用图片。</p>
+</blockquote>
+
+<p>参考资料来源：</p>
+<ul>
+  <li><a href="https://github.com/carrierwaveuploader/carrierwave">carrierwave官方github</a></li>
+  <li><a href="http://stackoverflow.com/questions/21411988/rails-4-multiple-image-or-file-upload-using-carrierwave">stackoverflow上的一个回答</a></li>
+  <li><a href="http://guides.rubyonrails.org/form_helpers.html">rail官方指南的相关主题</a> - 5 Uploading Files</li>
+  <li><a href="http://yy4ever.logdown.com/posts/1069287">yy的blog</a></li>
+</ul>

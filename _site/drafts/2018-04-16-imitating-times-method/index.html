@@ -1,0 +1,141 @@
+<p>失眠了，突然想到之前David那本关于Ruby的书中讲的关于自己用loop写一个 <code class="language-plaintext highlighter-rouge">n.times</code> 方法的例子。只记得整体思路，关于<code class="language-plaintext highlighter-rouge">yield</code>的具体用法细节失联，google了下。</p>
+
+<h4 id="1-关于-yield">1 关于 yield</h4>
+
+<ul>
+  <li>yield 通常用在 method 内部</li>
+  <li>yield 代表马上执行一次传给该 method 的 block</li>
+  <li>yield(arg) 代表马上执行传给该 method 的 block 并把 arg 作为block parameter传进block</li>
+  <li>yield 默认该 method 必须要接受(require)一个block作为参数，所以内部有yield而在call这个method时没带block会报错。</li>
+</ul>
+
+<h4 id="2-不使用-yield-的方式">2 不使用 yield 的方式</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Integer</span>
+  <span class="k">def</span> <span class="nf">mimic_times</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">self</span>
+      <span class="n">block</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1"># 把当前计数器次数传给 block</span>
+      <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="nb">self</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>测试：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="nb">require_relative</span> <span class="s1">'imi_times'</span> <span class="c1"># 也可以直接在 irb 中完成</span>
+ <span class="o">=&gt;</span> <span class="kp">true</span>
+
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">002</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"time -- </span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">0</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">1</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">2</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">3</span>
+ <span class="o">=&gt;</span> <span class="mi">4</span>
+
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">003</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span> <span class="p">{</span> <span class="nb">puts</span> <span class="s2">"time(no block param)"</span> <span class="p">}</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+ <span class="o">=&gt;</span> <span class="mi">4</span>
+
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span>
+<span class="no">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="n">from</span> <span class="sr">/Users/</span><span class="n">caven</span><span class="o">/</span><span class="p">.</span><span class="nf">rvm</span><span class="o">/</span><span class="n">rubies</span><span class="o">/</span><span class="n">ruby</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">irb</span><span class="p">:</span><span class="mi">11</span><span class="ss">:in</span> <span class="sb">`&lt;main&gt;'
+        2: from (irb):4
+        1: from /Users/caven/imi_times.rb:18:in `</span><span class="n">mimic_times</span><span class="s1">'
+NoMethodError (undefined method `call'</span> <span class="k">for</span> <span class="kp">nil</span><span class="ss">:NilClass</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="3-使用-yield-的方式">3 使用 yield 的方式</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Integer</span>
+  <span class="k">def</span> <span class="nf">mimic_times</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">self</span>
+      <span class="k">yield</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1"># 把当前计数器数字传给 block</span>
+      <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="nb">self</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>测试:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="nb">require_relative</span> <span class="s1">'imi_times'</span>
+ <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">002</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"time -- </span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">0</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">1</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">2</span>
+<span class="n">time</span> <span class="o">--</span> <span class="mi">3</span>
+ <span class="o">=&gt;</span> <span class="mi">4</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">003</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"time(no block param)"</span> <span class="p">}</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+<span class="n">time</span><span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">param</span><span class="p">)</span>
+ <span class="o">=&gt;</span> <span class="mi">4</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">mimic_times</span>
+<span class="no">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="n">from</span> <span class="sr">/Users/</span><span class="n">caven</span><span class="o">/</span><span class="p">.</span><span class="nf">rvm</span><span class="o">/</span><span class="n">rubies</span><span class="o">/</span><span class="n">ruby</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">irb</span><span class="p">:</span><span class="mi">11</span><span class="ss">:in</span> <span class="sb">`&lt;main&gt;'
+        2: from (irb):4
+        1: from /Users/caven/imi_times.rb:6:in `</span><span class="n">mimic_times</span><span class="err">'</span>
+<span class="no">LocalJumpError</span> <span class="p">(</span><span class="n">no</span> <span class="n">block</span> <span class="n">given</span> <span class="p">(</span><span class="k">yield</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h4 id="4-关于不给-block-时的报错">4 关于不给 block 时的报错</h4>
+
+<p>yield 风格的报错：</p>
+
+<p><code class="language-plaintext highlighter-rouge">LocalJumpError (no block given (yield))</code></p>
+
+<p>block.call 风格报错：</p>
+
+<p><code class="language-plaintext highlighter-rouge">NoMethodError (undefined method 'call' for nil:NilClass)</code></p>
+
+<p>注意两个Error的class不一样。在ruby原版的 <code class="language-plaintext highlighter-rouge">times</code> 方法中，不传 block 并不会报错，而是返回一个 enumerator 对象。</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">.</span><span class="nf">times</span>
+ <span class="o">=&gt;</span> <span class="c1">#&lt;Enumerator: 4:times&gt;</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">002</span> <span class="o">&gt;</span> <span class="n">enum</span> <span class="o">=</span> <span class="mi">4</span><span class="p">.</span><span class="nf">times</span>
+ <span class="o">=&gt;</span> <span class="c1">#&lt;Enumerator: 4:times&gt;</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">003</span> <span class="o">&gt;</span> <span class="n">enum</span><span class="p">.</span><span class="nf">next</span>
+ <span class="o">=&gt;</span> <span class="mi">0</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">enum</span><span class="p">.</span><span class="nf">next</span>
+ <span class="o">=&gt;</span> <span class="mi">1</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">005</span> <span class="o">&gt;</span> <span class="n">enum</span><span class="p">.</span><span class="nf">next</span>
+ <span class="o">=&gt;</span> <span class="mi">2</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="n">enum</span><span class="p">.</span><span class="nf">next</span>
+ <span class="o">=&gt;</span> <span class="mi">3</span>
+<span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span> <span class="p">:</span><span class="mo">007</span> <span class="o">&gt;</span> <span class="n">enum</span><span class="p">.</span><span class="nf">next</span>
+<span class="no">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="n">from</span> <span class="sr">/Users/</span><span class="n">caven</span><span class="o">/</span><span class="p">.</span><span class="nf">rvm</span><span class="o">/</span><span class="n">rubies</span><span class="o">/</span><span class="n">ruby</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">irb</span><span class="p">:</span><span class="mi">11</span><span class="ss">:in</span> <span class="sb">`&lt;main&gt;'
+        2: from (irb):7
+        1: from (irb):7:in `</span><span class="k">next</span><span class="err">'</span>
+<span class="no">StopIteration</span> <span class="p">(</span><span class="n">iteration</span> <span class="n">reached</span> <span class="n">an</span> <span class="k">end</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>关于Enumerator又是另一个更大的话题，这里只关注如何用简单的方法实现基础的 <code class="language-plaintext highlighter-rouge">times</code> 效果。</strong></p>
+
+<h4 id="5-小结">5 小结</h4>
+
+<p>不管使用<code class="language-plaintext highlighter-rouge">yield</code>还是使用 <code class="language-plaintext highlighter-rouge">&amp;block</code> + <code class="language-plaintext highlighter-rouge">block.call(arg)</code> 思路都是一样的。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">n.times</code> 这里的 <code class="language-plaintext highlighter-rouge">n</code> 是一个integer, 实际就是 Integer 这个 class 的一个 instance ，所以可以直接打开 class Integer 在里面写instance method
+    <ul>
+      <li>如果使用<code class="language-plaintext highlighter-rouge">yield</code>风格，那么定义method名称时后面不用带参数</li>
+      <li>如果使用<code class="language-plaintext highlighter-rouge">block.call</code>风格，那么定义method名称时后面带上(&amp;block)</li>
+    </ul>
+  </li>
+  <li>loop 开始前初始化一个计数器 variable = 0</li>
+  <li>loop 断点设置为 n &lt; self ，也就是最后一次loop执行是 n == self 的时候</li>
+  <li>用 yield 或 block.call 执行 block，并把当前计数器数字传入 block</li>
+  <li>每一次loop循环末尾计数器 +1</li>
+  <li>计数器累加到 n == self + 1 时，loop 打断不再执行，return 方法开头给出的整数。</li>
+</ul>

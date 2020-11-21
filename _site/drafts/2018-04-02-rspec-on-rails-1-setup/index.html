@@ -1,0 +1,146 @@
+<p>Rails 中默认是不带Rspec的，需要手动安装和一些配置。</p>
+
+<p>rspec-rails github 地址： https://github.com/rspec/rspec-rails</p>
+
+<h3 id="1-gemfile-中加入-rspec-rails">1 Gemfile 中加入 rspec-rails</h3>
+
+<p>注意是放在 group :development, :test 中</p>
+
+<p>Gemfile</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">'rspec-rails'</span><span class="p">,</span> <span class="s1">'~&gt; 3.6.0'</span> <span class="c1"># 版本可选</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>接着 <code class="language-plaintext highlighter-rouge">bundle</code></p>
+
+<h3 id="2-检查测试用的数据库配置">2 检查测试用的数据库配置</h3>
+
+<p>config/database.yml 中，看下有没有对应的</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test:
+  &lt;&lt;: *default
+  database: db/test.sqlite3
+</code></pre></div></div>
+<p>当然如果使用的是其他数据库这里作相应调整。</p>
+
+<h3 id="3-install并生成rspec的配置文件">3 install并生成rspec的配置文件</h3>
+
+<p>执行</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bin</span><span class="o">/</span><span class="n">rails</span> <span class="n">g</span> <span class="n">rspec</span><span class="ss">:install</span>
+</code></pre></div></div>
+
+<p>会生成</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Running via Spring preloader in process xxxx
+      create  .rspec
+      create  spec
+      create  spec/spec_helper.rb
+      create  spec/rails_helper.rb
+</code></pre></div></div>
+
+<ul>
+  <li>root下的 <code class="language-plaintext highlighter-rouge">.rspec</code> 文件是rspec的配置文件</li>
+  <li>spec/ 文件夹是写测试文件的地方</li>
+  <li>spec/spec_helper.rb 和 rails_helper.rb 有很多可自定义的选项。这两个文件中都有大量的注释说明，可以阅读了解。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">.rspec</code> 文件中默认有一行</p>
+
+<p><code class="language-plaintext highlighter-rouge">--require spec_helper</code>用来加载到刚刚生成的 spec/spec_helper.rb</p>
+
+<p>可以再加上一行</p>
+
+<p><code class="language-plaintext highlighter-rouge">--format documentation</code> 让输出格式模拟doc，更加易读</p>
+
+<p>最后 <code class="language-plaintext highlighter-rouge">.rspec</code> 文件会是</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--require spec_helper
+--format documentation
+</code></pre></div></div>
+
+<h3 id="4-可选安装-spring-commands-respec-加快测试的启动时间">4 （可选）安装 spring-commands-respec 加快测试的启动时间</h3>
+
+<p>https://github.com/jonleighton/spring-commands-rspec</p>
+
+<p>spring-commands-rspec 是一个针对 Rspec测试运行器的<a href="https://github.com/rbenv/rbenv/wiki/Understanding-binstubs">binstub</a>。</p>
+
+<blockquote>
+  <p>Binstubs are wrapper scripts around executables (sometimes referred to as “binaries”, although they don’t have to be compiled) whose purpose is to prepare the environment before dispatching the call to the original executable.
+In the Ruby world, the most common binstubs are the ones that RubyGems generates after installing a gem that contains executables. But binstubs can be written in any language, and it often makes sense to create them manually.</p>
+</blockquote>
+
+<p>Gemfile</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>group :development, :test do
+  # ...
+  gem 'spring-commands-rspec'
+end
+</code></pre></div></div>
+
+<p>执行 <code class="language-plaintext highlighter-rouge">bundle</code></p>
+
+<p>执行<code class="language-plaintext highlighter-rouge">bundle exec spring binstub rspec</code>生成新的binstub</p>
+
+<p>这会在 bin/ 文件夹中生成 <code class="language-plaintext highlighter-rouge">rspec</code> 文件</p>
+
+<p>这一步之后就可以尝试执行 <code class="language-plaintext highlighter-rouge">bin/respec</code> 看下有没有问题。</p>
+
+<h3 id="5-配置-rails-generator-命令定制会生成哪些rspec测试相关的文件">5 配置 <code class="language-plaintext highlighter-rouge">rails generator</code> 命令，定制会生成哪些rspec测试相关的文件</h3>
+
+<p>默认配置下，使用 <code class="language-plaintext highlighter-rouge">generate</code> 命令会生成很多测试相关的文件，比如fixtures, 测试helper的，测试 view 的，测试 routes 的等。但这些很多都用不到，可以关掉。</p>
+
+<p>config/application.rb</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># require ...</span>
+<span class="c1"># ...</span>
+
+<span class="k">module</span> <span class="nn">Projects</span>
+  <span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Rails</span><span class="o">::</span><span class="no">Application</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">load_default</span> <span class="mf">5.1</span>
+    <span class="c1"># ...</span>
+
+    <span class="n">config</span><span class="p">.</span><span class="nf">generators</span> <span class="k">do</span> <span class="o">|</span><span class="n">g</span><span class="o">|</span>
+      <span class="n">g</span><span class="p">.</span><span class="nf">test_framework</span> <span class="ss">:rspec</span><span class="p">,</span>
+        <span class="ss">fixtures: </span><span class="kp">false</span><span class="p">,</span>
+        <span class="ss">view_specs: </span><span class="kp">false</span><span class="p">,</span>
+        <span class="ss">helper_specs: </span><span class="kp">false</span><span class="p">,</span>
+        <span class="ss">routing_specs: </span><span class="kp">false</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>注意没有关掉 controller 和 model 测试文件的自动生成。</p>
+
+<h3 id="6-可选配合-guard-rspec-简化测试触发">6 (可选)配合 guard-rspec 简化测试触发</h3>
+
+<p>https://github.com/guard/guard-rspec</p>
+
+<p>guard 会在每次 spec 文件改动并存档的时候，自动跑一次刚刚变动到的spec文件中所包含的测试，这样免去了每完成了一次测试都要切到terminal中执行 <code class="language-plaintext highlighter-rouge">rspec</code> 的重复，可以让 guard 一直 watching 测试文件的变动。可以单开一个窗口跑guard，这样可以即时看到最新测试结果。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/guard-demo.gif" alt="" /></p>
+
+<p>RailsCasts 上的演示: http://railscasts.com/episodes/264-guard</p>
+
+<p><strong>配置步骤：</strong></p>
+
+<p>Gemfile</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="n">gem</span> <span class="s1">'guard-rspec'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">bundle</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">bundle exec guard init rspec</code></p>
+
+<p>接着就可以开始跑起来了</p>
+
+<p><code class="language-plaintext highlighter-rouge">bundle exec guard</code> 或者直接 <code class="language-plaintext highlighter-rouge">guard</code></p>
+
+<p>the end.</p>

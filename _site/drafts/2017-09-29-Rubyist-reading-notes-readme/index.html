@@ -1,0 +1,85 @@
+<h4 id="这是我读rubyist时做的笔记的整理稿">这是我读《Rubyist》时做的笔记的整理稿。</h4>
+
+<p>原本只是想借这本书熟悉 ruby 中 regular expression 的用法，结果竟读完了整本书，也意外地成为了我读的第一本英文原版书。得益于作者优秀的写作水平和他对Ruby深厚的理解，这本书读起来并不会很吃力。</p>
+
+<p>书中所有代码示例我都跟着做了一遍，有一些内容由于 Ruby 版本更新（看这本书的时候已经是2.5.0）会有所出入。起初所有代码示例都是截图，整理过程中会借 markdown 语法把示例尽量还原成文字。笔记并不会按照目录分级严格展开并覆盖到每一个末级标题，只会在大体内容上保持顺序的一致。</p>
+
+<p><strong>原书名：The Well-Grounded Rubyist - second edition</strong></p>
+
+<p><strong>原书作者：David A. Black</strong></p>
+
+<p>书的封面：</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/rubyist_cover.png" alt="" /></p>
+
+<hr />
+
+<p>书的目录：</p>
+
+<h2 id="1-ruby-foundations">1. Ruby foundations</h2>
+
+<h3 id="chapter-1-bootstrapping-your-ruby-literacy">Chapter 1. Bootstrapping your Ruby literacy</h3>
+
+<h3 id="chapter-2-objects-methods-and-local-variables">Chapter 2. Objects, methods, and local variables</h3>
+
+<h3 id="chapter-3-organizing-objects-with-classes">Chapter 3. Organizing objects with classes</h3>
+
+<h3 id="chapter-4-modules-and-program-organization">Chapter 4. Modules and program organization</h3>
+
+<h3 id="chapter-5-the-default-object-self-scope-and-visibility">Chapter 5. The default object (self), scope, and visibility</h3>
+
+<h3 id="chapter-6-control-flow-techniques">Chapter 6. Control-flow techniques</h3>
+
+<h2 id="2-built-in-classes-and-modules">2. Built-in classes and modules</h2>
+
+<h3 id="chapter-7-built-in-essentials">Chapter 7. Built-in essentials</h3>
+
+<h3 id="chapter-8-strings-symbols-and-other-scalar-objects">Chapter 8. Strings, symbols, and other scalar objects</h3>
+
+<h3 id="chapter-9-collection-and-container-objects">Chapter 9. Collection and container objects</h3>
+
+<h3 id="chapter-10-collections-central-enumerable-and-enumerator">Chapter 10. Collections central: Enumerable and Enumerator</h3>
+
+<h3 id="chapter-11-regular-expressions-and-regexp-based-string-operations">Chapter 11. Regular expressions and regexp-based string operations</h3>
+
+<h3 id="chapter-12-file-and-io-operations">Chapter 12. File and I/O operations</h3>
+
+<h2 id="3-ruby-dynamics">3. Ruby dynamics</h2>
+
+<h3 id="chapter-13-object-individuation">Chapter 13. Object individuation</h3>
+
+<h3 id="chapter-14-callable-and-runnable-objects">Chapter 14. Callable and runnable objects</h3>
+
+<h3 id="chapter-15-callbacks-hooks-and-runtime-introspection">Chapter 15. Callbacks, hooks, and runtime introspection</h3>
+
+<hr />
+
+<p>作者在一次演讲中总结出了7个关于ruby的核心内容</p>
+
+<p>https://www.youtube.com/watch?v=Xt6c6r4fbBs</p>
+
+<ul>
+  <li>
+    <p>Every expression evaluates to an object</p>
+  </li>
+  <li>
+    <p>It’s all about sending message to objects</p>
+  </li>
+  <li>
+    <p>Objects resolve message into methods</p>
+  </li>
+  <li>
+    <p>Classes and modules are objects</p>
+  </li>
+  <li>
+    <p>There’s always <code class="language-plaintext highlighter-rouge">self</code></p>
+  </li>
+  <li>
+    <p>Variables contain reference to objects</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">true</code> and <code class="language-plaintext highlighter-rouge">false</code> are objects; <code class="language-plaintext highlighter-rouge">true</code> and <code class="language-plaintext highlighter-rouge">false</code> are states</p>
+  </li>
+</ul>
+
+<p>这些核心观念在书中随处可见，也是理解Ruby的重要锚点。</p>

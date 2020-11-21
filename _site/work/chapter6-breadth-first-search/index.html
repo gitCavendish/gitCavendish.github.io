@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Algorithms 101 - 6 - breadth first search | Xullnn’s words</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Algorithms 101 - 6 - breadth first search" />
+<meta name="author" content="Xullnn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<meta property="og:description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<link rel="canonical" href="http://localhost:4000/work/chapter6-breadth-first-search/" />
+<meta property="og:url" content="http://localhost:4000/work/chapter6-breadth-first-search/" />
+<meta property="og:site_name" content="Xullnn’s words" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-30T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Algorithms 101 - 6 - breadth first search" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@Xullnn" />
+<script type="application/ld+json">
+{"datePublished":"2018-04-30T00:00:00+08:00","headline":"Algorithms 101 - 6 - breadth first search","dateModified":"2018-04-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/work/chapter6-breadth-first-search/"},"url":"http://localhost:4000/work/chapter6-breadth-first-search/","author":{"@type":"Person","name":"Xullnn"},"description":"算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/dark.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Xullnn&#39;s words" href="/atom.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  algorithms-101-6-breadth-first-search">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Xullnn's words</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">You can't do much carpentry with your bare hands and you can't do much thinking with your bare brain.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Algorithms 101 - 6 - breadth first search
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><img src="/images/2020.jpg" class="author-avatar u-photo" alt="Xullnn"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Xullnn</span>
+      </div><ul class="author-links"><li class="author-link">
+            <a class="u-url" rel="me" href=""><i class="fas fa-link fa-lg" title=""></i></a>
+          </li></ul>
+
+<span class="read-time">4 min read</span>
+
+    <time class="page-date dt-published" datetime="2018-04-30T00:00:00+08:00"><a class="u-url" href="">April 30, 2018</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#work" title="Pages filed under Work">Work</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#algorithm" title="Pages tagged algorithm" rel="tag">algorithm</a></li><li class="page-taxonomy"><a href="/tags/#programming" title="Pages tagged programming" rel="tag">programming</a></li><li class="page-taxonomy"><a href="/tags/#reading-notes" title="Pages tagged reading notes" rel="tag">reading notes</a></li><li class="page-taxonomy"><a href="/tags/#%E7%AE%97%E6%B3%95" title="Pages tagged 算法" rel="tag">算法</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <p><em>算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容</em></p>
+
+<h4 id="主要内容">主要内容:</h4>
+
+<ul>
+  <li>
+    <p>You learn how to model a network using a new, abstract data structure: graphs.
+将会学习如何使用一种新的抽象数据类型 graphs 来构建网络模型</p>
+  </li>
+  <li>
+    <p>You learn breadth-first search, an algorithm you can run on graphs to answer questions like, “What’s the shortest path to go to X?”
+学习广度优先搜索，这是一种用于 graphs 数据结构上的算法，用他你可以回答诸如”两点之间最短路径”的问题。</p>
+  </li>
+  <li>
+    <p>You learn about directed versus undirected graphs.
+学习有向图形和无向图形。</p>
+  </li>
+  <li>
+    <p>You learn topological sort, a different kind of sorting algorithm that exposes dependencies between nodes.
+学习拓扑搜索，一种不同的，可以揭露节点之间的从属依赖关系的算法。（也是用于graphs数据结构上）</p>
+  </li>
+</ul>
+
+<hr />
+
+<p>ruby-graph-algorithm</p>
+
+<p>https://github.com/brianstorti/ruby-graph-algorithms</p>
+
+<p>breadth-first search 可以找到两节点间的最短距离，但这里的最短距离可以映射到很多事情上比如：</p>
+
+<ul>
+  <li>写一个AI跳棋程序计算取得胜利的最少步数。</li>
+  <li>写一个使用最少步骤修正拼写错误的拼写检查器。</li>
+  <li>从关系网中找到离你最近的医生。</li>
+</ul>
+
+<hr />
+
+<h4 id="1-graphs-数据类型">1 Graphs 数据类型</h4>
+
+<blockquote>
+  <p>In mathematics, and more specifically in graph theory, a graph is a structure amounting to a set of objects in which some pairs of the objects are in some sense “related”.</p>
+</blockquote>
+
+<p>在数学中，准确的说是在图论中，graph 是一种结构表达。他能够模拟出一系列对象中某些对象存在’关联’的结构。</p>
+
+<p>– https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)</p>
+
+<h5 id="11-从a到b地最少的换乘次数">1.1 从A到B地，最少的换乘次数</h5>
+
+<p>假设从A点到B点有很多条可能的线路，每个节点代表一次换乘，找到最少换乘次数的路线。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8A%E5%8D%8811.03.58.png" alt="" /></p>
+
+<p>解这类问题的方法是：</p>
+<ul>
+  <li>将问题以图表方式表达</li>
+  <li>使用 breadth-first search</li>
+</ul>
+
+<h5 id="12-what-is-graphs">1.2 What is graphs</h5>
+
+<blockquote>
+  <p>A graph models a set of connections.</p>
+</blockquote>
+
+<p>graph可以模拟一系列连接。</p>
+
+<p>graph 的基本结构是 node 和 edge，node指发生连接的对象， edge 是用线表示nodes之间的关系。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8A%E5%8D%8811.14.07.png" alt="" /></p>
+
+<h5 id="13-neighbor">1.3 Neighbor</h5>
+
+<p>上面graph中的 edge 右边有一个箭头，这代表了关系的走向。edge 有箭头的graph称作，directed graph 有向图形。而紧邻当前对象的，箭头所指对象被称为当前对象的neighbor。A指向B 那么 B是A的neighbor，但A不是B的neighbor。neigbor关系具有方向性。</p>
+
+<p>graphs是一种模拟不同事物之间联系的表达方式。</p>
+
+<h4 id="2-breadth-first-search">2 Breadth first search</h4>
+
+<p>不同于之前用过的binary search， breadth-first search 是用在图形上的算法，他帮助我们解决两类问题：</p>
+
+<ul>
+  <li>从节点 A 到 B 是否有可用路径。</li>
+  <li>从A到B的最短路径。</li>
+</ul>
+
+<h5 id="21-is-there-a-path">2.1 Is there a path?</h5>
+
+<p>假设你是一个芒果果园园主，你想要在你的朋友网络中找到关系最近的芒果卖家。初看这个问题不像是’is there a path’这类问题，但实际上可以把你要找到的芒果卖家设为一个关系网络中具有具体特征的node， 然后你要找出你的关系网中是否有路径可以到达这样一个节点。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%8812.55.59.png" alt="" /></p>
+
+<p>这类搜索中，你不仅要搜索你的直接朋友，你还要搜索你朋友的朋友，甚至更多层关系。</p>
+
+<p>每一对关系中，当前节点的人的朋友就可以视作他的neighbor节点。</p>
+
+<blockquote>
+  <p>With this algorithm, you’ll search your entire network until you come across a mango seller. This algorithm is breadth-first search.</p>
+</blockquote>
+
+<p>这种搜索的方式就是广度优先搜索。</p>
+
+<h5 id="22-finding-the-shortest-path">2.2 Finding the shortest path</h5>
+
+<p>对应到找芒果卖家的案例就是找到离我最近的芒果卖家。”Can you find the closest mango seller?”</p>
+
+<p>这类搜索中你的直接朋友即算作第一层级的连接, first level connection，朋友的朋友是 second level connection 以此类推。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%881.13.28.png" alt="" /></p>
+
+<p><strong>搜索是从第一层级开始，在搜索完整个第一层级后，才会搜索第二层级。</strong> 这样当网络中有多个符合条件的节点/路径时， 你将总是找到最近的那个。</p>
+
+<p>我们可以把要搜索的节点放到一个队列中<code class="language-plaintext highlighter-rouge">queue</code>中，先放第一层的，然后后面一层一层放。然后从queue中依次拿出进行搜索。</p>
+
+<h5 id="23-queue">2.3 Queue</h5>
+
+<p><code class="language-plaintext highlighter-rouge">Queue</code> 类似真实世界中人们排队的情形，先来的排在前面，后来的排后面，出队的时候是排在前面的先出。也就是 First in First out。</p>
+
+<blockquote>
+  <p>Queues are similar to stacks. You can’t access random elements in the queue. Instead, there are two only operations, enqueue and dequeue.</p>
+</blockquote>
+
+<p>上面案例中搜索芒果的案例中，第一层的节点最先被加入 queue, 当搜索开始时，先拿出来的也是第一层的节点。这一点和 Stack 不同，Stack中积压的function是，最后一个也就是最上层的完成后才能进行前面的，直至Stack发源的那个function。 当queue有一点和stack相同的是，对象的完成都必须遵循一个顺序，不能随机的取出对象。</p>
+
+<blockquote>
+  <p>The queue is called a FIFO data structure: First In, First Out. In contrast, a stack is a LIFO data structure: Last In, First Out.</p>
+</blockquote>
+
+<h4 id="3-finding-the-mango-seller">3 Finding the mango seller</h4>
+
+<p>这一小节将用代码实现找到芒果卖家的案例。</p>
+
+<h5 id="31-用hash-table建立关系网模型">3.1 用hash table建立关系网模型</h5>
+
+<p>一个问题是如何实现关系的指向 比如 a 指向 b， 作者提到的是用 Hash table。由于可能存在一个节点可能存在指向多个节点的问题，而同一个hash中key具有唯一性，所以可以将其neighbor放到一个array中。</p>
+
+<p>python</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">graph</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"you"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">"alice"</span><span class="p">,</span> <span class="s">"bob"</span><span class="p">,</span> <span class="s">"claire"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>到到末端节点也就是往下没有朋友时就使用空 array</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">graph</span><span class="p">[</span><span class="s">"Some"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<p>完成整个hash table</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">graph</span><span class="p">[</span><span class="s">"you"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">"alice"</span><span class="p">,</span> <span class="s">"bob"</span><span class="p">,</span> <span class="s">"claire"</span><span class="p">]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"bob"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">"anuj"</span><span class="p">,</span> <span class="s">"peggy"</span><span class="p">]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"alice"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">"peggy"</span><span class="p">]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"claire"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">"thom"</span><span class="p">,</span> <span class="s">"jonny"</span><span class="p">]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"anuj"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"peggy"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"thom"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">graph</span><span class="p">[</span><span class="s">"jonny"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<p><strong>directed graph 和 undirected graph</strong>， 之前提到的当一个节点指向另一个节点时，这类graph叫directed graph 有向graph，而如果两个节点相互指向，则是undirected graph无向graph。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%881.41.52.png" alt="" /></p>
+
+<p>在 undirected graph 中，两个节点互为neighbor</p>
+
+<blockquote>
+  <p>An undirected graph doesn’t have any arrows, and both nodes are each other’s neighbors. For example, both of these graphs are equal.</p>
+</blockquote>
+
+<h5 id="32-代码实现">3.2 代码实现</h5>
+
+<p>python伪代码</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">search_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span> <span class="c1"># 新建queue
+</span>    <span class="n">search_queue</span> <span class="o">+=</span> <span class="n">graph</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="c1"># 中心节点的所有neighbor
+</span>    <span class="n">searched</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">search_queue</span><span class="p">:</span>
+      <span class="n">person</span> <span class="o">=</span> <span class="n">search_queue</span><span class="p">.</span><span class="n">popleft</span><span class="p">()</span> <span class="c1"># 拿出一个neighbor
+</span>      <span class="k">if</span> <span class="ow">not</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">searched</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">person_is_seller</span><span class="p">(</span><span class="n">person</span><span class="p">):</span>
+          <span class="k">print</span> <span class="n">person</span> <span class="o">+</span> <span class="s">" is a mango seller!"</span>
+          <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">search_queue</span> <span class="o">+=</span> <span class="n">graph</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="c1"># 若不是seller，把他的朋友加到queue中
+</span>          <span class="n">searched</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+    <span class="k">return</span>  <span class="bp">False</span>
+
+  <span class="n">search</span><span class="p">(</span><span class="s">"you"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>大体思路是先把中心节点的neigbors加到queue中，然后依次拿出来比对，比对成功时即退出function返回true, 比对失败一个就把这个node的neighbors加到queue中，这样如果第一层级的neighbors搜索全部失败之后，第一层级所有人的neighbors也全部加到 queue中，while loop 会进行进直到 queue中排空。</p>
+
+<p><code class="language-plaintext highlighter-rouge">if not person in searched:</code> 条件的作用是，在关系网中可能存在互为neighbor的情况，那么搜索过程中就可能陷入循环在两个对象上一直交换，不断将对方加到queue中。所以存储一个已经处理过的对象，这样可以直接跳过处理过的对象。</p>
+
+<h5 id="33-running-time">3.3 Running time</h5>
+
+<p>如果你进行上述搜索，那么你会历经每一个 edge, 所以算法复杂度至少是 O(n of edges)</p>
+
+<p>同时你还要在queue中不断注入搜索节点，那么算法复杂度又要加上 O(n of friend)</p>
+
+<p>所以是 O(n of edges + n of nodes)</p>
+
+<p>在graph的属于中，每个节点也叫做 vertex ，所以 breadth first search 的算法复杂度表达为</p>
+
+<p><strong>O(V+E)</strong></p>
+
+<blockquote>
+  <p>and it’s more commonly written as O(V+E) (V for number of vertices, E for number of edges).</p>
+</blockquote>
+
+<h4 id="4-ruby-代码的一种实现">4 Ruby 代码的一种实现</h4>
+
+<p>尝试用ruby写出上述过程，但不同的是没有使用hash table来模拟关系网，是用 class 以及对象属性来模拟。</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Every new Person instance will get a random name</span>
+<span class="c1"># will set :is_seller to false</span>
+<span class="c1"># will get an empty array's friends</span>
+<span class="k">class</span> <span class="nc">Person</span>
+  <span class="nb">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:is_seller</span><span class="p">,</span> <span class="ss">:friends</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'a'</span><span class="o">..</span><span class="s1">'z'</span><span class="p">).</span><span class="nf">to_a</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nf">join</span><span class="p">.</span><span class="nf">capitalize!</span>
+    <span class="vi">@is_seller</span> <span class="o">=</span> <span class="kp">false</span>
+    <span class="vi">@friends</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">make_friends</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="n">friends</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">n</span><span class="p">.</span><span class="nf">times</span> <span class="p">{</span> <span class="n">friends</span> <span class="o">&lt;&lt;</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">}</span>
+  <span class="k">return</span> <span class="n">friends</span>
+<span class="k">end</span>
+
+<span class="c1"># create central node person</span>
+<span class="n">central_person</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">;</span> <span class="n">central_person</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"Center_node"</span>
+
+<span class="c1"># make 4 friends for central person</span>
+<span class="n">central_person</span><span class="p">.</span><span class="nf">friends</span> <span class="o">=</span> <span class="n">make_friends</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># for each central person's friends, make 3 friends for them</span>
+<span class="c1"># thus we get 1 + 4 + 4*3 == 17 person in all levels</span>
+<span class="n">central_person</span><span class="p">.</span><span class="nf">friends</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="p">.</span><span class="nf">friends</span> <span class="o">=</span> <span class="n">make_friends</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="c1"># Randomly choose one person as seller in the second level</span>
+<span class="n">seller</span> <span class="o">=</span> <span class="n">central_person</span><span class="p">.</span><span class="nf">friends</span><span class="p">.</span><span class="nf">sample</span><span class="p">.</span><span class="nf">friends</span><span class="p">.</span><span class="nf">sample</span>
+<span class="n">seller</span><span class="p">.</span><span class="nf">is_seller</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="nb">puts</span> <span class="s2">"This time seller is: </span><span class="si">#{</span><span class="n">seller</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="k">def</span> <span class="nf">search_seller</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+  <span class="n">search_queue</span> <span class="o">=</span> <span class="no">Queue</span><span class="p">.</span><span class="nf">new</span>
+  <span class="n">search_queue</span> <span class="o">&lt;&lt;</span> <span class="n">center</span>
+  <span class="n">searched</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">while</span> <span class="n">search_queue</span> <span class="c1"># or say until search_queue.empty?</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">search_queue</span><span class="p">.</span><span class="nf">pop</span>
+    <span class="k">if</span> <span class="n">person</span><span class="p">.</span><span class="nf">is_seller</span>
+      <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">person</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2"> is seller!"</span>
+      <span class="k">return</span> <span class="kp">true</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="o">!</span><span class="n">person</span><span class="p">.</span><span class="nf">friends</span><span class="p">.</span><span class="nf">empty?</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">searched</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">person</span><span class="p">)</span> <span class="c1"># this avoids error when touching end point person</span>
+        <span class="n">person</span><span class="p">.</span><span class="nf">friends</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">search_queue</span> <span class="o">&lt;&lt;</span> <span class="n">f</span> <span class="p">}</span>
+        <span class="n">searched</span> <span class="o">&lt;&lt;</span> <span class="n">person</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="nb">puts</span> <span class="s2">"No seller"</span>
+  <span class="k">return</span> <span class="kp">false</span>
+<span class="k">end</span>
+
+<span class="n">search_seller</span><span class="p">(</span><span class="n">central_person</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><a href="https://gist.github.com/gitXullnndish/f65f36ab990ab805ad53febc435ac558">将过程注释出来</a>，可以看到搜索的顺序是按层级展开的</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/Snip20180420_1.png" alt="" /></p>
+
+<hr />
+
+<h4 id="recap">Recap</h4>
+
+<ul>
+  <li>Breadth-first search tells you if there’s a path from A to B.    <br />
+广度优先搜索告诉你从A到B是否有路径。</li>
+  <li>If there’s a path, breadth-first search will find the shortest path.    <br />
+广度优先搜索告诉你两点之间的最短路径。</li>
+  <li>If you have a problem like “find the shortest X,” try modeling your problem as a graph, and use breadth-first search to solve.    <br />
+如果有类似找到到X的最短路径的问题，可以将问题抽象为 graph, 然后使用广度优先搜索。</li>
+  <li>A directed graph has arrows, and the relationship follows the direction of the arrow (rama -&gt; adit means “rama owes adit money”).   <br />
+有向graph具有箭头指向，表示的关系也遵循这个指向。</li>
+  <li>Undirected graphs don’t have arrows, and the relationship goes both ways (ross - rachel means “ross dated rachel and rachel dated ross”).   <br />
+无向graph没有箭头(或说两边都有箭头)，表示双向关系。</li>
+  <li>Queues are FIFO (First In, First Out).      <br />
+Queues 是先进先出</li>
+  <li>Stacks are LIFO (Last In, First Out).  <br />
+Stacks是后进先出。</li>
+  <li>You need to check people in the order they were added to the search list, so the search list needs to be a queue. Otherwise, you won’t get the shortest path.    <br />
+进行广度优先搜索时，搜索的顺序很重要，所以我们用Queue来处理。</li>
+  <li>Once you check someone, make sure you don’t check them again. Otherwise, you might end up in an infinite loop.   <br />
+一旦你搜寻过某个目标了，要确保你不会再次搜索他，不然可能会陷入无限循环。</li>
+</ul>
+
+<hr />
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter6-breadth-first-search%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Algorithms+101+-+6+-+breadth+first+search%20http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter6-breadth-first-search%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter6-breadth-first-search%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Algorithms+101+-+6+-+breadth+first+search&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter6-breadth-first-search%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/work/chapter5-hash-tables/">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> Algorithms 101 - 5 - hash tables
+
+      </span>
+    </a>
+  
+
+  
+    <a class="page-next" href="/work/chapter7-dijkstras-algorithm/">
+      <h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">
+        Algorithms 101 - 7 - dijkstra’s algorithm
+ <i class="fas fa-arrow-right"></i>
+      </span>
+    </a>
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="/atom.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2020 Xullnn's words. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>

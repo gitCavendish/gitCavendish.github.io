@@ -1,0 +1,143 @@
+<p>社交网站的用户之间通常都可以相互 follow 或者 unfollow。Rails 中这种关系的实现使用的中间表，这个table只有两个栏位，一边是发出 follow 动作的 user 的id, 另一边是被follow一方的id。</p>
+
+<p>比如这样的栏位设置</p>
+
+<p>table name: relationships</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">follower_id</th>
+      <th style="text-align: center">followed_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>注意，这个中间表实际是有方向性的，第一行是user1 follow 了user2, 第二行是 user2 follow了user1。顺序不一样，实际产生的关系也不一样。</p>
+
+<p>单看第一行 user1 是主动的一方， user2 是被动的一方。第二行则反过来。</p>
+
+<p>而在 model 中，要使用的名称又需要转换一下思维。</p>
+
+<p>实际app中，我们通常会说， user1 有多少个 follower (被多少人跟随), 以及 user1 有多少following（跟随了多少人）。</p>
+
+<p>那么到table中拿 user1 的 follower 实际是在找 user1 对应的被动关系，也就是找到右边一栏全是 user1.id的 rows，然后 vice versa。可以理解为</p>
+
+<p><strong>主动关系的链条示例：</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># user1 会有很多主动关系</span>
+<span class="c1"># 找出join table中follower_id 是 1的所有 rows</span>
+<span class="p">(</span><span class="n">user1</span><span class="o">.</span><span class="p">)</span><span class="n">following_ids</span> <span class="o">=</span> <span class="no">Relationship</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">follower_id: </span><span class="mi">1</span><span class="p">).</span><span class="nf">pluck</span><span class="p">(</span><span class="ss">:followed_id</span><span class="p">)</span>
+<span class="p">(</span><span class="n">user1</span><span class="o">.</span><span class="p">)</span><span class="n">following</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">id: </span><span class="n">following_ids</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>来看看这两行对应的 SQL，帮助理解</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">2</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span> <span class="p">:</span><span class="mi">007</span> <span class="o">&gt;</span> <span class="n">following_ids</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">.</span><span class="k">where</span><span class="p">(</span><span class="n">follower_id</span><span class="p">:</span> <span class="mi">1</span><span class="p">).</span><span class="n">pluck</span><span class="p">(:</span><span class="n">followed_id</span><span class="p">)</span>
+
+   <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">2</span><span class="n">ms</span><span class="p">)</span>  <span class="k">SELECT</span> <span class="nv">"relationships"</span><span class="p">.</span><span class="nv">"followed_id"</span> <span class="k">FROM</span> <span class="nv">"relationships"</span> <span class="k">WHERE</span> <span class="nv">"relationships"</span><span class="p">.</span><span class="nv">"follower_id"</span> <span class="o">=</span> <span class="o">?</span>  <span class="p">[[</span><span class="nv">"follower_id"</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+ <span class="o">=&gt;</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">]</span>
+
+<span class="mi">2</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span> <span class="p">:</span><span class="mi">008</span> <span class="o">&gt;</span> <span class="n">following</span> <span class="o">=</span> <span class="k">User</span><span class="p">.</span><span class="k">where</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="n">following_ids</span><span class="p">)</span>
+
+  <span class="k">User</span> <span class="k">Load</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="n">ms</span><span class="p">)</span>  <span class="k">SELECT</span>  <span class="nv">"users"</span><span class="p">.</span><span class="o">*</span> <span class="k">FROM</span> <span class="nv">"users"</span> <span class="k">WHERE</span> <span class="nv">"users"</span><span class="p">.</span><span class="nv">"id"</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">)</span> <span class="k">LIMIT</span> <span class="o">?</span>  <span class="p">[[</span><span class="nv">"LIMIT"</span><span class="p">,</span> <span class="mi">11</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p>被动关系则是从 followed_id 一端开始定位所有 relationship, 然后再拿到所有的 follower_id，就可以知道 user1 被那users跟随了。</p>
+
+<p><strong>阻止自己follow自己的情况发生</strong></p>
+
+<p>但有一种情况是用户自己 follow 自己，虽然在 view 的逻辑中可以屏蔽掉自己follow自己的按键，也可以在 controller层做限制，但最好在 model 层做 validate。</p>
+
+<p>自己 follow 自己</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">follower_id</th>
+      <th style="text-align: center">followed_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>先确认没有加验证之前是否可以实现上面的情况：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rails</span> <span class="n">c</span> <span class="o">--</span><span class="n">sandbox</span>
+<span class="c1"># ...</span>
+<span class="n">u</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">first</span>
+<span class="no">Relationship</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">follower_id: </span><span class="n">u</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> <span class="ss">followed_id: </span><span class="n">u</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span>
+<span class="c1"># ...</span>
+<span class="o">=&gt;</span> <span class="c1">#&lt;Relationship id: 88, follower_id: 1, followed_id: 1, created_at: "2018-04-04 15:34:32", updated_at: "2018-04-04 15:34:32"&gt;</span>
+</code></pre></div></div>
+
+<p>的确是可以的。</p>
+
+<p>自定义一个验证</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Relationship</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="c1"># ...</span>
+  <span class="c1"># 注意用单数</span>
+  <span class="n">validate</span> <span class="ss">:self_referential_not_allowed</span>
+  <span class="c1"># ...</span>
+  <span class="kp">private</span>
+    <span class="k">def</span> <span class="nf">self_referential_not_allowed</span>
+      <span class="k">if</span> <span class="nb">self</span><span class="p">.</span><span class="nf">follower_id</span> <span class="o">==</span> <span class="nb">self</span><span class="p">.</span><span class="nf">following_id</span>
+        <span class="n">errors</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">:self_refer</span><span class="p">,</span> <span class="s2">"can't follow yourself."</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>加上之后可以到 console 中再次验证，也可以在 rspec 中加上对应的测试看是否通过</p>
+
+<p><strong>console 验证</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rails</span> <span class="n">c</span> <span class="o">--</span><span class="n">sandbox</span>
+<span class="c1"># ...</span>
+<span class="n">u</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">first</span>
+<span class="no">Relationship</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">follower_id: </span><span class="n">u</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> <span class="ss">followed_id: </span><span class="n">u</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span>
+<span class="c1"># ...</span>
+<span class="p">(</span><span class="mf">0.2</span><span class="n">ms</span><span class="p">)</span>  <span class="no">ROLLBACK</span> <span class="no">TO</span> <span class="no">SAVEPOINT</span> <span class="n">active_record_1</span>
+<span class="o">=&gt;</span> <span class="c1">#&lt;Relationship id: nil, follower_id: 1, followed_id: 1, created_at: nil, updated_at: nil&gt;</span>
+</code></pre></div></div>
+
+<p>拿到了一个 ROLLBACK， 看来验证是有效的。</p>
+
+<p><strong>Rspec中写测试</strong></p>
+
+<p>spec/models/relationship_spec.rb</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ...</span>
+
+<span class="n">before</span> <span class="k">do</span>
+  <span class="vi">@user</span> <span class="o">=</span> <span class="c1"># ...</span>
+<span class="k">end</span>
+
+<span class="n">describe</span> <span class="s2">"Following behavior test"</span> <span class="k">do</span>
+  <span class="n">context</span> <span class="s2">"one can't following itself"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"is invalid that :follower_id and :following_id are same"</span> <span class="k">do</span>
+      <span class="n">relationship</span> <span class="o">=</span> <span class="no">Relationship</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">follower_id: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> <span class="ss">followed_id: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span>
+      <span class="n">relationship</span><span class="p">.</span><span class="nf">valid?</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">relationship</span><span class="p">.</span><span class="nf">errors</span><span class="p">[</span><span class="ss">:self_refer</span><span class="p">]).</span><span class="nf">to_not</span> <span class="n">be_empty</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>测试应该通过。</p>

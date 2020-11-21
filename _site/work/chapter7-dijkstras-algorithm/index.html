@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Algorithms 101 - 7 - dijkstra’s algorithm | Xullnn’s words</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Algorithms 101 - 7 - dijkstra’s algorithm" />
+<meta name="author" content="Xullnn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<meta property="og:description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<link rel="canonical" href="http://localhost:4000/work/chapter7-dijkstras-algorithm/" />
+<meta property="og:url" content="http://localhost:4000/work/chapter7-dijkstras-algorithm/" />
+<meta property="og:site_name" content="Xullnn’s words" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-01T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Algorithms 101 - 7 - dijkstra’s algorithm" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@Xullnn" />
+<script type="application/ld+json">
+{"datePublished":"2018-05-01T00:00:00+08:00","headline":"Algorithms 101 - 7 - dijkstra’s algorithm","dateModified":"2018-05-01T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/work/chapter7-dijkstras-algorithm/"},"url":"http://localhost:4000/work/chapter7-dijkstras-algorithm/","author":{"@type":"Person","name":"Xullnn"},"description":"算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/dark.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Xullnn&#39;s words" href="/atom.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  algorithms-101-7-dijkstra-s-algorithm">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Xullnn's words</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">You can't do much carpentry with your bare hands and you can't do much thinking with your bare brain.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Algorithms 101 - 7 - dijkstra’s algorithm
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><img src="/images/2020.jpg" class="author-avatar u-photo" alt="Xullnn"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Xullnn</span>
+      </div><ul class="author-links"><li class="author-link">
+            <a class="u-url" rel="me" href=""><i class="fas fa-link fa-lg" title=""></i></a>
+          </li></ul>
+
+<span class="read-time">7 min read</span>
+
+    <time class="page-date dt-published" datetime="2018-05-01T00:00:00+08:00"><a class="u-url" href="">May 1, 2018</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#work" title="Pages filed under Work">Work</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#algorithm" title="Pages tagged algorithm" rel="tag">algorithm</a></li><li class="page-taxonomy"><a href="/tags/#programming" title="Pages tagged programming" rel="tag">programming</a></li><li class="page-taxonomy"><a href="/tags/#reading-notes" title="Pages tagged reading notes" rel="tag">reading notes</a></li><li class="page-taxonomy"><a href="/tags/#%E7%AE%97%E6%B3%95" title="Pages tagged 算法" rel="tag">算法</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <p><em>算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容</em></p>
+
+<h4 id="主要内容">主要内容</h4>
+
+<ul>
+  <li>We continue the discussion of graphs, and you learn about weighted graphs: a way to assign more or less weight to some edges. <br />
+继续讨论 graphs 这种数据结构, 不过是带有weight权重的graphs: 这种graphs会给edges赋予不同的weight</li>
+  <li>You learn Dijkstra’s algorithm, which lets you answer “What’s the shortest path to X?” for weighted graphs.   <br />
+将会学习 Dijkstra 算法，用来计算两点之间最小weight的问题。</li>
+</ul>
+
+<hr />
+
+<p>说明：此章内容理解比较依赖对graph整体图景的把握，作者为了表达上的具体生动，使用了很多具象的名称附加到graph上。个人认为反而增加的理解难度，尤其对非英语母语的人。因此代码示例会使用另外一个例子，这个例子取自 youtube 上的一个教学视频，讲解相对清楚。其他部分内容会综合书中讲解展开。</p>
+
+<p>视频地址：  https://www.youtube.com/watch?v=5GT5hYzjNoo</p>
+
+<hr />
+
+<h4 id="1-导言">1 导言</h4>
+
+<p>首先回顾前面breadth first search的内容。在breadth first search中，我们以源vertex作为起点，逐层扫描neighbor节点，直至找到目标对象或路径。在整个过程中每个edge被视作完全相等的。这是一种相对理想的状态，实际情况中，两两对象之间的距离，或抵达成本，或其他成本往往是不同的。</p>
+
+<p>A到B以及A到C,同样都只经过1个edge</p>
+<ul>
+  <li>但A到B可能是100米</li>
+  <li>B到C可能是50米</li>
+</ul>
+
+<p>那么就可以说这两个edge具有不同的weight。</p>
+
+<p>对应到两点之间的乘车问题，空间最省的不一定是时间最省的。</p>
+<ul>
+  <li>A -&gt; C -&gt; D 总路程是 50km， 总耗时100分钟。(省道)</li>
+  <li>A -&gt; B -&gt; D 总路程是 100km, 但总耗时也许只要50分钟。(高速)</li>
+</ul>
+
+<p>所以将什么属性作为edge的weight也是视具体要解决的问题，或优先要考虑的因素而定。可以把每段路程的耗时作为weight也可以把每段路程的长度作为weight。甚至可以把每段路程的舒适程度或风景好坏程度作为weight。</p>
+
+<p>书中例子使用的是两点之间的耗时作为weight。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%883.27.58.png" alt="" /></p>
+
+<p>这种在graph上计算edge带weight的问题的算法之一就是， Dijkstra’s algorithm。</p>
+
+<p>https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm</p>
+
+<p><strong>weighted graph 和 unweighted graph</strong></p>
+
+<p>根据名称，定义就很清楚了。</p>
+
+<h4 id="2-working-with-dijkstras-algorithm">2 Working with Dijkstra’s algorithm</h4>
+
+<h5 id="21-dijkstras-algorithms-basic-steps">2.1 Dijkstra’s algorithm’s basic steps</h5>
+
+<p>基于找到两点间最省时的例子，Dijkstra 算法遵循的几个（循环）基本步骤是：</p>
+
+<p>每个node的节点值指的是从起点node到达这个node所历经的所有edges的weight的总和，而起点node到达某node的路径可能有很多条，那么可能的weight就有很多个。</p>
+
+<ol>
+  <li>
+    <p>找到最目前最省时的node,如果是刚开始时就是源节点，可以把此时的weight视作0</p>
+  </li>
+  <li>找到当前node的所有neighbors, 用当前最省时node的weight分别加上到达其各个neighbor的的weight值。然后比对更新
+    <ul>
+      <li>如果某个neighbor还没有weight值，那么就把算出来的值作为他的weight保留</li>
+      <li>如果某个neighbor已经有了weight值
+        <ul>
+          <li>如果算出来新的weight比原有的小，就取代之</li>
+          <li>否则仍然保留原来的weight</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>排除刚刚作为源节点的node, 留下剩余节点，重复上面的过程，先找到weight最低的node，然后计算，更新，直至所有node都被作为当前最低weight的node处理过之后</p>
+  </li>
+  <li>计算最终结果</li>
+</ol>
+
+<h5 id="22-meeting-cycles-and-negative-weights">2.2 Meeting cycles and negative weights</h5>
+
+<p><strong>关于cycle</strong></p>
+
+<p>之前提到 Dijkstra’s algorithm 无法处理graph中存在cycle的情况。这是一个错误陈述。</p>
+
+<p>https://stackoverflow.com/questions/43394847/dijkstras-algorithm-and-cycles</p>
+
+<p>如果使用一个array来逐步记录已经作为中心节点处理过的 nodes, 那么不仅edge全是正数的cycle，连<strong>某些</strong>带负数的cycle也可以处理。</p>
+
+<p><strong>关于negative weight</strong></p>
+
+<p>而关于negative weight, 某些情况下下dijkstra’s algorithm可以处理，有些则不能。下面这些回答中包含两种情况，问题中包含的情况，negative weight 没有影响到最后结果的正确性，而回答中给出了一个会影响结果的例子。</p>
+
+<p>Negative weights using Dijkstra’s Algorithm</p>
+
+<p>https://stackoverflow.com/questions/6799172/negative-weights-using-dijkstras-algorithm?rq=1</p>
+
+<p>https://stackoverflow.com/questions/13159337/why-doesnt-dijkstras-algorithm-work-for-negative-weight-edges</p>
+
+<p>但cycle和negative weight的情况相对特殊，下面讨论都以排除这两种情况为前提。</p>
+
+<h5 id="23-trading-for-a-piano">2.3 Trading for a piano</h5>
+
+<p>书上给出的例子：</p>
+
+<p>Rama is trying to trade a music book for a piano.</p>
+
+<p>“I’ll give you this poster for your book,” says Alex. “It’s a poster of my favorite band, Destroyer. Or I’ll give you this rare LP of Rick Astley for your book and $5 more.” “Ooh, I’ve heard that LP has a really great song,” says Amy. “I’ll trade you my guitar or drum set for the poster or the LP.</p>
+
+<p>“I’ve been meaning to get into guitar!” exclaims Beethoven. “Hey, I’ll trade you my piano for either of Amy’s things.”</p>
+
+<p>Perfect! With a little bit of money, Rama can trade his way from a piano book to a real piano. Now he just needs to figure out how to spend the least amount of money to make those trades. Let’s graph out what he’s been offered.”</p>
+
+<p>摘录来自: Aditya Y. Bhargava. “Grokking Algorithms: An illustrated guide for programmers and other curious people。” iBooks.</p>
+
+<p>Rama 手里有1本book，他想用这本 book 去交换些什么东西（实际他也许并不知道他最后可能换到1台piano）接下来的剧情是：</p>
+<ul>
+  <li>Alex 愿意无条件用 poster 换 Rama的 book</li>
+  <li>Alex 同时也愿意收取 Rama 5块钱把自己的 LP 换成 Rama 的 book</li>
+  <li>Amy 愿意用自己的Guitar(收15块) 或 Drum(收35块) 换 Alex 的 LP</li>
+  <li>Beethoven 愿意用自己的piano 换 Amy 的 Guitar(收20块) 或 Drum(收10块)</li>
+</ul>
+
+<p>这整个是一个交叉的网状结构，使用graph将其在图面上表达出来才能较好理解其中关系。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%887.54.23.png" alt="" /></p>
+
+<p>回顾一下 Dijkstra’s algorithm 的套路</p>
+
+<ol>
+  <li>
+    <p>找到最目前weight最小的node,如果是刚开始时就是源节点，可以把此时的weight视作0</p>
+  </li>
+  <li>找到当前node的所有neighbors, 用当前最省时node的weight分别加上到达其各个neighbor的的weight值。然后比对更新
+    <ul>
+      <li>如果某个neighbor还没有weight值，那么就把算出来的值作为他的weight保留</li>
+      <li>如果某个neighbor已经有了weight值
+        <ul>
+          <li>如果算出来新的weight比原有的小，就取代之</li>
+          <li>否则仍然保留原来的weight</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>排除刚刚作为源节点的node, 留下剩余节点，重复上面的过程，先找到weight最低的node，然后计算，更新，直至所有node都被作为当前最低weight的node处理过之后</p>
+  </li>
+  <li>计算最终结果</li>
+</ol>
+
+<p>表格化的计算过程：</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/piano.jpg" alt="" /></p>
+
+<p>简单描述这个过程：</p>
+
+<p>第一步：</p>
+<ul>
+  <li>将 book 作为中心节点， 并把他的 weight 设为0，记录下其parent node，还是 book, 也可以理解从 book 到 book 的weight 是 0。这一步相当于设置一个初始状态。</li>
+  <li>然后计算从 book 节点到其所有neighbors的weight，将他们的parent都记为book。book不能直接到达的点设为 Infinity</li>
+  <li>将 book 加入 processed nodes 数组，锁定book节点的weight值，不再更新。</li>
+  <li>从此行剩余的节点中找出 weight 最低的那个– Poster， 将其作为下一次计算的中心节点</li>
+</ul>
+
+<p>第二步：</p>
+<ul>
+  <li>将 Poster 作为中心节点。</li>
+  <li>然后计算从 Poster 节点到其所有neighbors的weight
+    <ul>
+      <li>如果算出来的值小于之前这个neighbor节点的记录值，那么更新其weight以及parent(设为poster, 因为你经过poster找到到达这个neighbor更短的线路)</li>
+      <li>如果算出来的值大于等于其neighbor之前的weight值，那么保持不变</li>
+      <li>不能抵达的仍然保持 Infinity</li>
+    </ul>
+  </li>
+  <li>将 poster 加入 processed nodes 数组，锁定poster节点的weight值，不再更新。</li>
+  <li>从此行剩余的节点中找出 weight 最低的那个– LP ， 将其作为下一次计算的中心节点</li>
+</ul>
+
+<p>如此循环，直至中心计算节点到达目标 piano。</p>
+
+<h5 id="24-代码实现思路">2.4 代码实现思路</h5>
+
+<p>这类带有指向的结构作者同样使用了 hash table 的方式。</p>
+
+<p>1 首先使用一个 costs hash 来追踪每个node当前的weight值</p>
+<ul>
+  <li>比如对应到上面book-piano的第一步就记录为
+  <code class="language-plaintext highlighter-rouge">costs = { "book" =&gt; 0, "poster" =&gt; 0, "LP" =&gt; 5, "Guitar" =&gt; Infinity, "Drum" =&gt; Infinity, "Piano" =&gt; Infinity }</code></li>
+</ul>
+
+<p>2 同样使用一个 parents hash 来追踪每一个node的 parent 变化
+<code class="language-plaintext highlighter-rouge">parents = { "book" =&gt; nil, "poster" =&gt; "book", "LP" =&gt; "book", "Guitar" =&gt; nil, "Drum" =&gt; nil, "Piano" =&gt; nil}</code></p>
+
+<p>3 还需要一个 hash 来记录每个 edge 的weight值，但edge没有名称，所以加上一层嵌套用 <code class="language-plaintext highlighter-rouge">{中心节点 =&gt; { neighbor1 =&gt; D1, neighbor2 =&gt; D2 }}</code> 这样的结构模拟
+比如 <code class="language-plaintext highlighter-rouge">graph = { "book" =&gt; { "Lp" =&gt; 5, "Poster" =&gt;0 }, "Poster" =&gt; { "Guitar" =&gt; 30, "Drums" =&gt; 35 } ...... }</code> 这样一直记完所有节点</p>
+
+<p>4 用一个 Array 来记录已经当做中心节点处理过的 nodes <code class="language-plaintext highlighter-rouge">proccessed_nodes = []</code></p>
+
+<p><strong>hash tables的使用方法</strong></p>
+
+<ul>
+  <li>costs hash 是一个会不断更新的 hash, 随着不断找到新的 weight 更低的路径，取得某个node当前的weight值只用 <code class="language-plaintext highlighter-rouge">costs[node]</code></li>
+  <li>parents hash 的更新跟 costs 同步，因为新的路径表明着更换了新的parent node</li>
+  <li>如果要取得某一段edge的weight, 使用 graph hash 比如 <code class="language-plaintext highlighter-rouge">graph['post']['Guitar']</code> 可以拿到从 poster 到 Guitar 这段edge的weight</li>
+  <li>使用 array 记录已经当做中心节点处理过的 node 的原因是
+    <ul>
+      <li>每一次当做中心节点的node,都是从前一步中选出的最低weight所在的node，这个node将被视作到它的最小weight，以后不再更新</li>
+      <li>记录下这部分node，可以避免遇到cycle陷入循环或重复处理某些nodes。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>利用上面的 hash 和 array 我们就将整个 graph 结构抽象了出来，下一步就只需要用代码模拟 Dijkstra’s algorithm 的循环步骤</p>
+
+<h5 id="25-简化版案例的-python-伪代码">2.5 简化版案例的 python 伪代码</h5>
+
+<p>书中给出了一个更简化的例子</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-24+%E4%B8%8B%E5%8D%889.03.05.png" alt="" /></p>
+
+<p>同样需要先把节点以及节点之间的edge抽象为 hash table, 步骤省略。看伪代码</p>
+
+<p>python:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">find_lowest_cost_node</span><span class="p">(</span><span class="n">costs</span><span class="p">):</span>
+  <span class="n">lowest_cost</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">"inf"</span><span class="p">)</span>
+  <span class="n">lowest_cost_node</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">costs</span><span class="p">:</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">costs</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">cost</span> <span class="o">&lt;</span> <span class="n">lowest_cost</span> <span class="ow">and</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed</span><span class="p">:</span>
+      <span class="n">lowest_cost</span> <span class="o">=</span> <span class="n">cost</span>
+      <span class="n">lowest_cost_node</span> <span class="o">=</span> <span class="n">node</span>
+  <span class="k">return</span> <span class="n">lowest_cost_node</span>
+
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">find_lowest_cost_node</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span> <span class="c1"># 初始化 costs
+</span><span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+  <span class="n">cost</span> <span class="o">=</span> <span class="n">costs</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+  <span class="n">neighbors</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">new_cost</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">+</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">costs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">new_cost</span><span class="p">:</span>
+      <span class="n">costs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_cost</span>
+      <span class="n">parents</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+  <span class="n">processed</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+  <span class="n">node</span> <span class="o">=</span> <span class="n">find_lowest_cost_node</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span> <span class="c1"># 找到下一个中心节点
+</span></code></pre></div></div>
+
+<h4 id="3-ruby-代码实现">3 Ruby 代码实现</h4>
+
+<p>Ruby 代码graph基于前面提到的视频，其graph是这样的</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-21+%E4%B8%8B%E5%8D%8811.02.40.png" alt="" /></p>
+
+<p>当然这里已经给出结果，具体过程可以看原视频。</p>
+
+<p><strong>注：代码中对象的命名尽量使用表意的名称，所以会比较长，但看起来会比较好理解</strong></p>
+
+<h5 id="31-无-class-封装版本">3.1 无 class 封装版本</h5>
+
+<p>注意这里准备各种hash的过程有些是在不同 methods 中利用 graph_segments hash 生成，这样灵活度会高些</p>
+
+<p>不然每次要改3个hash</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">from_a</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"a"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">5</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="mi">2</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_b</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"b"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">13</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_c</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"c"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">5</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_d</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"d"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">3</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_e</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"e"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">1</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_f</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"f"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">3</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_g</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"g"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">6</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_h</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"h"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">0</span> <span class="p">}}</span>
+
+<span class="n">graph_segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_a</span><span class="p">,</span> <span class="n">from_b</span><span class="p">,</span> <span class="n">from_c</span><span class="p">,</span> <span class="n">from_d</span><span class="p">,</span> <span class="n">from_e</span><span class="p">,</span> <span class="n">from_f</span><span class="p">,</span> <span class="n">from_g</span><span class="p">,</span> <span class="n">from_h</span><span class="p">].</span><span class="nf">reduce</span> <span class="p">{</span> <span class="o">|</span><span class="n">graph</span><span class="p">,</span> <span class="nb">hash</span><span class="o">|</span>  <span class="n">graph</span><span class="p">.</span><span class="nf">merge!</span> <span class="nb">hash</span> <span class="p">}</span>
+
+<span class="c1"># ---------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">all_nodes</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">)</span>
+  <span class="n">graph_segments</span><span class="p">.</span><span class="nf">keys</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">initialize_costs</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">,</span> <span class="n">source_vertex</span><span class="p">)</span>
+  <span class="n">costs</span> <span class="o">=</span> <span class="p">{</span> <span class="n">source_vertex</span> <span class="o">=&gt;</span> <span class="mi">0</span> <span class="p">}</span>
+  <span class="p">(</span><span class="n">all_nodes</span> <span class="o">-</span> <span class="p">[</span><span class="n">source_vertex</span><span class="p">]).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span> <span class="n">costs</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="no">Float</span><span class="o">::</span><span class="no">INFINITY</span> <span class="p">}</span>
+  <span class="n">costs</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">initialize_parents</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+  <span class="n">parents</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">nodes</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span> <span class="n">parents</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="p">}</span>
+  <span class="n">parents</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">calculate_costs</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">,</span> <span class="n">source_vertex</span><span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">all_nodes</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">)</span>
+    <span class="n">current_proccessing_node</span> <span class="o">=</span> <span class="n">source_vertex</span>
+    <span class="n">unproccessed_nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+    <span class="n">costs</span> <span class="o">=</span> <span class="n">initialize_costs</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">source_vertex</span><span class="p">)</span>
+    <span class="n">parents</span> <span class="o">=</span> <span class="n">initialize_parents</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">unproccessed_nodes</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">current_proccessing_node</span><span class="p">)</span>
+      <span class="n">lowest_cost</span> <span class="o">=</span> <span class="n">costs</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">]</span>
+      <span class="n">neighbors</span> <span class="o">=</span> <span class="n">graph_segments</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">].</span><span class="nf">keys</span>
+
+        <span class="n">neighbors</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">neighbor</span><span class="o">|</span>
+          <span class="n">new_cost</span> <span class="o">=</span> <span class="n">lowest_cost</span> <span class="o">+</span> <span class="n">graph_segments</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">][</span><span class="n">neighbor</span><span class="p">]</span>
+          <span class="k">if</span> <span class="n">new_cost</span> <span class="o">&lt;</span> <span class="n">costs</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span>
+            <span class="n">costs</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_cost</span>
+            <span class="n">parents</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_proccessing_node</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+
+      <span class="n">unproccessed_nodes</span> <span class="o">-=</span> <span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">]</span>
+      <span class="n">proccessed_nodes</span> <span class="o">=</span> <span class="n">nodes</span> <span class="o">-</span> <span class="n">unproccessed_nodes</span>
+      <span class="n">lowest_cost</span> <span class="o">=</span> <span class="n">costs</span><span class="p">.</span><span class="nf">values_at</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">unproccessed_nodes</span><span class="p">)).</span><span class="nf">min</span>
+      <span class="n">possible_lowest_cost_nodes</span> <span class="o">=</span> <span class="n">costs</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="n">v</span> <span class="o">==</span> <span class="n">lowest_cost</span> <span class="p">}</span>
+        <span class="n">proccessed_nodes</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">proccessed_node</span><span class="o">|</span>
+          <span class="n">possible_lowest_cost_nodes</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="n">proccessed_node</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="n">current_proccessing_node</span> <span class="o">=</span> <span class="n">possible_lowest_cost_nodes</span><span class="p">.</span><span class="nf">key</span><span class="p">(</span><span class="n">lowest_cost</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Final updated costs from source_vertex is: </span><span class="se">\n</span><span class="s2"> </span><span class="si">#{</span><span class="n">costs</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Following the lowest cost path, every node's parent is: </span><span class="se">\n</span><span class="s2"> </span><span class="si">#{</span><span class="n">parents</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
+<span class="k">end</span>
+
+<span class="n">calculate_costs</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">)</span>
+
+
+<span class="c1"># Notice towarding the end of calculate_costs method, there is a possible_lowest_cost_nodes</span>
+<span class="c1"># The operations below aim to avoid situation like this:</span>
+<span class="c1"># At some point in costs, there might have multi nodes point to a same value</span>
+<span class="c1"># If these nodes include a proccessed one, it should have cleared out from</span>
+<span class="c1"># the unproccessed_nodes array</span>
+<span class="c1"># But if we use current_proccessing_node = costs.key(lowest_cost)</span>
+<span class="c1"># to update the node that will be handled in next loop, it may choose</span>
+<span class="c1"># the proccessed one.</span>
+<span class="c1"># Thus will lead while condition fail, then the whole procedure is broken</span>
+
+<span class="c1"># The solution is choosing next current_proccessing_node only from unproccessed_nodes</span>
+</code></pre></div></div>
+
+<p>结果</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Final</span> <span class="n">updated</span> <span class="n">costs</span> <span class="n">from</span> <span class="n">source_vertex</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">4</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">5</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">11</span><span class="p">}</span>
+
+<span class="no">Following</span> <span class="n">the</span> <span class="n">lowest</span> <span class="n">cost</span> <span class="n">path</span><span class="p">,</span> <span class="n">every</span> <span class="n">node</span><span class="err">'</span><span class="n">s</span> <span class="n">parent</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="s2">"c"</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="s2">"g"</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="s2">"e"</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="s2">"f"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h5 id="32-使用-class-封装">3.2 使用 class 封装</h5>
+
+<p>这里将 Graph 抽成一个 class, 这样每一个新的 graph 都可以用一个 Graph 的 instance 代表</p>
+
+<p>将 dijkstra’s algorithm 写成一个 instance method 这样可以对不同的 graph 都进行计算，适用度更广。</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># For every new Graph object</span>
+<span class="c1"># graph_segments is the hash we need to give, based on it, we get ` :nodes, :weights, :parents` while initializing a new Graph instance</span>
+<span class="c1"># Except for `:nodes` attribute, all the other attributes are implemented by hash.</span>
+
+
+<span class="k">class</span> <span class="nc">Graph</span>
+  <span class="nb">attr_accessor</span> <span class="ss">:nodes</span><span class="p">,</span> <span class="ss">:graph_segments</span><span class="p">,</span> <span class="ss">:weights</span><span class="p">,</span> <span class="ss">:parents</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">)</span>
+    <span class="vi">@graph_segments</span> <span class="o">=</span> <span class="n">graph_segments</span>
+    <span class="vi">@weights</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="vi">@nodes</span> <span class="o">=</span> <span class="n">graph_segments</span><span class="p">.</span><span class="nf">keys</span>
+    <span class="vi">@nodes</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span> <span class="vi">@weights</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="no">Float</span><span class="o">::</span><span class="no">INFINITY</span> <span class="p">}</span>
+    <span class="vi">@parents</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="vi">@nodes</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span> <span class="vi">@parents</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+
+  <span class="k">def</span> <span class="nf">calculate_weights_from</span><span class="p">(</span><span class="n">source_vertex</span><span class="p">)</span>
+      <span class="n">weights</span><span class="p">[</span><span class="n">source_vertex</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">current_proccessing_node</span> <span class="o">=</span> <span class="n">source_vertex</span>
+      <span class="n">unproccessed_nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+
+      <span class="k">while</span> <span class="n">unproccessed_nodes</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">current_proccessing_node</span><span class="p">)</span>
+        <span class="n">lowest_weight</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">]</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="n">graph_segments</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">].</span><span class="nf">keys</span>
+
+          <span class="n">neighbors</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">neighbor</span><span class="o">|</span>
+            <span class="n">new_weight</span> <span class="o">=</span> <span class="n">lowest_weight</span> <span class="o">+</span> <span class="n">graph_segments</span><span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">][</span><span class="n">neighbor</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">new_weight</span> <span class="o">&lt;</span> <span class="n">weights</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span>
+              <span class="n">weights</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weight</span>
+              <span class="n">parents</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_proccessing_node</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+
+        <span class="n">unproccessed_nodes</span> <span class="o">-=</span> <span class="p">[</span><span class="n">current_proccessing_node</span><span class="p">]</span>
+        <span class="n">proccessed_nodes</span> <span class="o">=</span> <span class="n">nodes</span> <span class="o">-</span> <span class="n">unproccessed_nodes</span>
+        <span class="n">lowest_weight</span> <span class="o">=</span> <span class="n">weights</span><span class="p">.</span><span class="nf">values_at</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">unproccessed_nodes</span><span class="p">)).</span><span class="nf">min</span>
+        <span class="n">possible_lowest_weight_nodes</span> <span class="o">=</span> <span class="n">weights</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="n">v</span> <span class="o">==</span> <span class="n">lowest_weight</span> <span class="p">}</span>
+          <span class="n">proccessed_nodes</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">proccessed_node</span><span class="o">|</span>
+            <span class="n">possible_lowest_weight_nodes</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="n">proccessed_node</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="n">current_proccessing_node</span> <span class="o">=</span> <span class="n">possible_lowest_weight_nodes</span><span class="p">.</span><span class="nf">key</span><span class="p">(</span><span class="n">lowest_weight</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Final updated weights from source_vertex is: </span><span class="se">\n</span><span class="s2"> </span><span class="si">#{</span><span class="n">weights</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Following the lowest weight path, every node's parent is: </span><span class="se">\n</span><span class="s2"> </span><span class="si">#{</span><span class="n">parents</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+<span class="n">from_a</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"a"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">5</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="mi">2</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_b</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"b"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">13</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_c</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"c"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">5</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_d</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"d"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">3</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_e</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"e"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">1</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_f</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"f"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">3</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_g</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"g"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">6</span> <span class="p">}</span> <span class="p">}</span>
+<span class="n">from_h</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"h"</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">0</span> <span class="p">}}</span>
+
+<span class="n">graph_segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_a</span><span class="p">,</span> <span class="n">from_b</span><span class="p">,</span> <span class="n">from_c</span><span class="p">,</span> <span class="n">from_d</span><span class="p">,</span> <span class="n">from_e</span><span class="p">,</span> <span class="n">from_f</span><span class="p">,</span> <span class="n">from_g</span><span class="p">,</span> <span class="n">from_h</span><span class="p">].</span><span class="nf">reduce</span> <span class="p">{</span> <span class="o">|</span><span class="n">graph</span><span class="p">,</span> <span class="nb">hash</span><span class="o">|</span>  <span class="n">graph</span><span class="p">.</span><span class="nf">merge!</span> <span class="nb">hash</span> <span class="p">}</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="no">Graph</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">graph_segments</span><span class="p">)</span>
+<span class="n">graph</span><span class="p">.</span><span class="nf">calculate_weights_from</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>这里的结果和上面没有class的一样，这里并不一定要把 <code class="language-plaintext highlighter-rouge">a</code> 作为 souurce_vertex， 可以使用其他 vertex</p>
+
+<p>比如 c: <code class="language-plaintext highlighter-rouge">graph.calculate_weights_from("c")</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Final</span> <span class="n">updated</span> <span class="n">weights</span> <span class="n">from</span> <span class="n">source_vertex</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="mi">4</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="mi">4</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">9</span><span class="p">}</span>
+
+<span class="no">Following</span> <span class="n">the</span> <span class="n">lowest</span> <span class="n">weight</span> <span class="n">path</span><span class="p">,</span> <span class="n">every</span> <span class="n">node</span><span class="err">'</span><span class="n">s</span> <span class="n">parent</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="s2">"c"</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="s2">"g"</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="s2">"e"</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="s2">"f"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>注意这里某些点对应的是 Infinity, 这是因为用于计算的 graph 是 directed graph 就是有向的，这意味着从某些点出发是不能到达某些点的。在定义 graph_segments 的时候，实际就定义好了 edges 的方向。比如 c 节点当时是这样定义的</p>
+
+<p><code class="language-plaintext highlighter-rouge">from_c = { "c" =&gt; { "d"=&gt;2, "e"=&gt;5 } }</code></p>
+
+<p>那么c就只能往 d 或者 e 走， 而 d 和 e 相关的 edges 也是有方向的，这就导致从 c 出发是无法到达 a 的，所以距离是 INFINITY</p>
+
+<p>同样在定义 h 节点时，他没有neighbors, 也就是只有 f 和 h 指向他，而他自己没有指向任何其他节点，所以如果你从 h 出发，那么除它本身对应的weight是0以外，其他节点应该都是 INFINITY</p>
+
+<p><code class="language-plaintext highlighter-rouge">graph.calculate_weights_from("h")</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Final</span> <span class="n">updated</span> <span class="n">weights</span> <span class="n">from</span> <span class="n">source_vertex</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="no">Infinity</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">}</span>
+
+<span class="no">Following</span> <span class="n">the</span> <span class="n">lowest</span> <span class="n">weight</span> <span class="n">path</span><span class="p">,</span> <span class="n">every</span> <span class="n">node</span><span class="err">'</span><span class="n">s</span> <span class="n">parent</span> <span class="ss">is:
+ </span><span class="p">{</span><span class="s2">"a"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"b"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"c"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"d"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"e"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"f"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"g"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">"h"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<h4 id="recap">Recap</h4>
+
+<p>作为回顾，可以再看下 wikipedia 上Dijkstra’s algorithm 的 gif 图，他和breadth-first search的基本行为模式类似，都是逐层展开。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/Dijkstra_Animation.gif" alt="" /></p>
+
+<ul>
+  <li>Breadth-first search is used to calculate the shortest path for an unweighted graph.   <br />
+广度优先搜索只适用于 unweighted graph</li>
+  <li>Dijkstra’s algorithm is used to calculate the shortest path for a weighted graph.   <br />
+Dijkstra’s algorithm 可以用于 weighted graph 的计算</li>
+  <li>Dijkstra’s algorithm works when all the weights are positive.    <br />
+当所有edge的weight 是正数时，Dijkstra’s algorithm 可以很好的工作（负数状态其实不太会在现实中出现）</li>
+</ul>
+
+<hr />
+
+<p>附：</p>
+
+<p>一个将 graph 相关算法用 ruby 写出来的 git repo</p>
+
+<p>https://github.com/brianstorti/ruby-graph-algorithms</p>
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter7-dijkstras-algorithm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Algorithms+101+-+7+-+dijkstra%27s+algorithm%20http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter7-dijkstras-algorithm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter7-dijkstras-algorithm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Algorithms+101+-+7+-+dijkstra%27s+algorithm&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter7-dijkstras-algorithm%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/work/chapter6-breadth-first-search/">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> Algorithms 101 - 6 - breadth first search
+
+      </span>
+    </a>
+  
+
+  
+    <a class="page-next" href="/work/chapter8-greedy-algorithm/">
+      <h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">
+        Algorithms 101 - 8 - greedy algorithm
+ <i class="fas fa-arrow-right"></i>
+      </span>
+    </a>
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="/atom.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2020 Xullnn's words. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>

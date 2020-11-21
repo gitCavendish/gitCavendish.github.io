@@ -1,0 +1,177 @@
+<p>seed是开发过程中一个小而强的工具，避免了每次重置资料库后需要手动去增加单笔资料用于测试。开发到一定阶段，用好seed可以省出部分时间和精力。</p>
+
+<p><strong>seeds.rb</strong> 这个文件在 app/db/seeds.rb这里，从文件类型可以看出，里面的代码是用ruby写的。</p>
+
+<p>一个简单的示例用来演示 seed 的基本用法：</p>
+
+<h4 id="准备工作">准备工作：</h4>
+<p><code class="language-plaintext highlighter-rouge">rails new seed-sample</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo ⮀ rails new seed-sample
+      create
+      create  README.md
+      .....
+      .....
+      run  bundle exec spring binstub --all
+* bin/</span><span class="ss">rake: </span><span class="n">spring</span> <span class="n">inserted</span>
+<span class="o">*</span> <span class="n">bin</span><span class="o">/</span><span class="ss">rails: </span><span class="n">spring</span> <span class="n">inserted</span>
+<span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo ⮀
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">cd seed-sample</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">git init, git add .....</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">rails g scaffold city name:string description:text populaton:integer</code></p>
+
+<p>然后会产生一个migrate文件：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateCities</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">5.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">create_table</span> <span class="ss">:cities</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+      <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="ss">:name</span>
+      <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="ss">:description</span>
+      <span class="n">t</span><span class="p">.</span><span class="nf">integer</span> <span class="ss">:population</span>
+
+      <span class="n">t</span><span class="p">.</span><span class="nf">timestamps</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>接着 <code class="language-plaintext highlighter-rouge">rake db:migrate</code></p>
+
+<p>这样就建立好了用于演示的model以及资料库栏位，这个model叫 City , 有三个栏位，现在来看用seed如何向栏位中注入信息。</p>
+
+<hr />
+
+<p>在console中，如果想建立一条city的资料可以怎么做？
+<code class="language-plaintext highlighter-rouge">rails c</code>
+接着
+ <code class="language-plaintext highlighter-rouge">City.create(name:  "Leshan", description: "cool", population: "19999")</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name:  </span><span class="s2">"Leshan"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"cool"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"19999"</span><span class="p">)</span>
+    <span class="p">(</span><span class="mf">0.1</span><span class="n">ms</span><span class="p">)</span>  <span class="k">begin</span> <span class="n">transaction</span>
+   <span class="no">SQL</span> <span class="p">(</span><span class="mf">0.4</span><span class="n">ms</span><span class="p">)</span>  <span class="no">INSERT</span> <span class="no">INTO</span> <span class="s2">"cities"</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">,</span> <span class="s2">"created_at"</span><span class="p">,</span> <span class="s2">"updated_at"</span><span class="p">)</span> <span class="no">VALUES</span> <span class="p">(</span><span class="sc">?,</span> <span class="p">?,</span> <span class="sc">?,</span> <span class="p">?,</span> <span class="sc">?)</span>  <span class="p">[[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"Leshan"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"cool"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"population"</span><span class="p">,</span> <span class="mi">19999</span><span class="p">],</span> <span class="p">[</span><span class="s2">"created_at"</span><span class="p">,</span> <span class="mi">2017</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">30</span> <span class="mo">02</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="mi">54</span> <span class="no">UTC</span><span class="p">],</span> <span class="p">[</span><span class="s2">"updated_at"</span><span class="p">,</span> <span class="mi">2017</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">30</span> <span class="mo">02</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="mi">54</span> <span class="no">UTC</span><span class="p">]]</span>
+    <span class="p">(</span><span class="mf">1.7</span><span class="n">ms</span><span class="p">)</span>  <span class="n">commit</span> <span class="n">transaction</span>
+  <span class="o">=&gt;</span> <span class="c1">#&lt;City id: 1, name: "Leshan", description: "cool", population: 19999, created_at: "2017-04-30 02:08:54", updated_at: "2017-04-30 02:08:54"&gt;</span>
+</code></pre></div></div>
+
+<p>这种写法其实就可以用在Seed中。</p>
+
+<h4 id="1-建立一笔资料">1 建立一笔资料</h4>
+
+<p>只需在seeds.rb中写：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name:  </span><span class="s2">"Leshan"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"cool"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"19999"</span><span class="p">)</span>
+
+<span class="nb">puts</span> <span class="s2">"--------------------------Successfully created a city-----------------------------"</span>
+
+</code></pre></div></div>
+
+<p>使用seed只需 <code class="language-plaintext highlighter-rouge">rake db:seed</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo/see</span><span class="n">d</span><span class="o">-</span><span class="n">sample</span> <span class="err">⮀</span> <span class="err">⭠</span> <span class="n">master</span><span class="err">±</span> <span class="err">⮀</span> <span class="n">rake</span> <span class="n">db</span><span class="ss">:seed</span>
+<span class="o">--------------------------</span><span class="no">Successfully</span> <span class="n">created</span> <span class="n">a</span> <span class="n">city</span><span class="o">-----------------------------</span>
+<span class="n">caven</span><span class="vi">@CavendeMacBook</span><span class="o">-</span><span class="no">Pro</span> <span class="err">⮀</span> <span class="o">~</span><span class="sr">/demo/see</span><span class="n">d</span><span class="o">-</span><span class="n">sample</span> <span class="err">⮀</span> <span class="err">⭠</span> <span class="n">master</span><span class="err">±</span> <span class="err">⮀</span>
+</code></pre></div></div>
+
+<p>这样我们就用seed建立了一笔city资料。</p>
+
+<h4 id="2-笨办法建立多笔资料">2 笨办法建立多笔资料</h4>
+
+<p><strong>方法一：</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name:  </span><span class="s2">"Leshan"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"cool"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"19999"</span><span class="p">)</span>
+<span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name:  </span><span class="s2">"Shanghai"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"nice"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"100000"</span><span class="p">)</span>
+<span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name:  </span><span class="s2">"New York"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"awesome"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"900000"</span><span class="p">)</span>
+
+<span class="o">.....</span>
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">rake db：seed</code></p>
+
+<p>每一行都建立了一笔city的资料，当然如果过你愿意可以一直写下去。</p>
+
+<p><strong>方法二：</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">([</span>
+             <span class="p">{</span><span class="ss">name: </span><span class="s2">"Leshan"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"cool"</span><span class="p">,</span> <span class="ss">population: </span><span class="mi">100000</span> <span class="p">},</span>
+             <span class="p">{</span><span class="ss">name: </span><span class="s2">"Shanghai"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"nice"</span><span class="p">,</span> <span class="ss">population: </span><span class="mi">800000</span> <span class="p">},</span>
+             <span class="p">{</span><span class="ss">name: </span><span class="s2">"New York"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"awesome"</span><span class="p">,</span> <span class="ss">population: </span><span class="mi">900000</span><span class="p">}</span>
+            <span class="p">])</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">rake db:seed</code> 同样得到三笔资料。</p>
+
+<p><strong>方法三：</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">city_items</span> <span class="o">=</span> <span class="p">[</span>
+              <span class="p">[</span><span class="s2">"Leshan"</span><span class="p">,</span> <span class="s2">"cool"</span><span class="p">,</span> <span class="mi">800000</span><span class="p">],</span>
+              <span class="p">[</span><span class="s2">"Shanghai"</span><span class="p">,</span> <span class="s2">"nice"</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span>
+              <span class="p">[</span><span class="s2">"New York"</span><span class="p">,</span> <span class="s2">"cold"</span><span class="p">,</span> <span class="mi">900000</span><span class="p">]</span>
+              <span class="p">]</span>
+
+<span class="n">city_items</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">ci</span><span class="o">|</span>
+  <span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="n">ci</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="ss">:description</span> <span class="o">=&gt;</span> <span class="n">ci</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="ss">:population</span> <span class="o">=&gt;</span> <span class="n">ci</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><strong>以上三种方式得到的结果是一样的，只是采用了不同的写法，用哪种取决于你的偏好。</strong></p>
+
+<h4 id="懒办法建立多笔资料">懒办法建立多笔资料</h4>
+
+<p>有时不需要资料栏位中的信息都是真实可循的，那么看利用索引来快速生成很多的类似的资料，栏位中的信息区别只在后面的索引数字。</p>
+
+<p>比如我现在要生成100笔city资料， 我可不想一笔一笔得去写每个栏位，那么可以这样：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">100</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span>
+    <span class="no">City</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"City </span><span class="si">#{</span><span class="n">num</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Description </span><span class="si">#{</span><span class="n">num</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">population: </span><span class="s2">"</span><span class="si">#{</span><span class="n">num</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>这样生成的资料会是：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="p">[</span> <span class="mi">0</span><span class="p">]</span> <span class="c1">#&lt;City:0x007ff913b12f60&gt; {</span>
+                 <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="mi">912</span><span class="p">,</span>
+               <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"City 0"</span><span class="p">,</span>
+        <span class="ss">:description</span> <span class="o">=&gt;</span> <span class="s2">"Description 0"</span><span class="p">,</span>
+         <span class="ss">:population</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="ss">:created_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">,</span>
+         <span class="ss">:updated_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span>
+    <span class="p">},</span>
+    <span class="p">[</span> <span class="mi">1</span><span class="p">]</span> <span class="c1">#&lt;City:0x007ff913b00f40&gt; {</span>
+                 <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="mi">913</span><span class="p">,</span>
+               <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"City 1"</span><span class="p">,</span>
+        <span class="ss">:description</span> <span class="o">=&gt;</span> <span class="s2">"Description 1"</span><span class="p">,</span>
+         <span class="ss">:population</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="ss">:created_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">,</span>
+         <span class="ss">:updated_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span>
+    <span class="p">},</span>
+    <span class="p">[</span> <span class="mi">2</span><span class="p">]</span> <span class="c1">#&lt;City:0x007ff913b00108&gt; {</span>
+                 <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="mi">914</span><span class="p">,</span>
+               <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"City 2"</span><span class="p">,</span>
+        <span class="ss">:description</span> <span class="o">=&gt;</span> <span class="s2">"Description 2"</span><span class="p">,</span>
+         <span class="ss">:population</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
+         <span class="ss">:created_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">,</span>
+         <span class="ss">:updated_at</span> <span class="o">=&gt;</span> <span class="no">Sun</span><span class="p">,</span> <span class="mi">30</span> <span class="no">Apr</span> <span class="mi">2017</span> <span class="mo">02</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">24</span> <span class="no">UTC</span> <span class="o">+</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span>
+    <span class="p">},</span>
+    <span class="p">.</span>
+    <span class="nf">.</span>
+    <span class="p">.</span>
+    <span class="nf">.</span>
+    <span class="p">.</span>
+    <span class="nf">.</span>
+</code></pre></div></div>
+
+<p>一直到City 99。这样的好处是快，缺点是资料信息很雷同。</p>
+
+<h4 id="一个需要注意的问题">一个需要注意的问题</h4>
+
+<blockquote>
+  <p>在seed档没有修改过的情况下，连续运行两次 <code class="language-plaintext highlighter-rouge">rake db:seed</code> 后一次产生的资料并不会覆盖前一次的，而是在之前的基础上再增加。为了避免这种情况，可以在seeds.rb中最上面写一行 <code class="language-plaintext highlighter-rouge">City.destroy_all</code> 。这样每次跑seed前都会先清空之前的资料，当然这只限于开发环境下资料丢失不重要的情况下。</p>
+</blockquote>
+
+<p>如果我们用1中的seed跑了两次 <code class="language-plaintext highlighter-rouge">rake db:seed</code> 那么会产生6笔资料，id从1到6, 主要三个栏位的信息会是重复的。</p>

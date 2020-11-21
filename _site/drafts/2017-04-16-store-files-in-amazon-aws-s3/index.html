@@ -1,0 +1,169 @@
+<p>前面的文章中谈到在development环境下<a href="https://gitcavendish.github.io/2017/How-to-upload-multi-files-in-rails/">如何使用carrierwave实现附件的上传和管理</a>，在开发环境中我们将文件存储路径设置为 <strong>app/public/uploads/</strong> 下，这个目录下的文件可以不经过rails的处理直接被调用。那么在production产品环境中上传的文件放哪里呢？</p>
+
+<p>同样使用carrierwave我们看下部署到heroku上如何使用Amazon Simple Storage Service (Amazon S3)服务来将上传的文件存在专门的存储服务器。</p>
+<blockquote>
+  <p>实际上也可以将上传的文件就留在public文件夹中，但记得不要在 .gitignore 文件中加上 public/uploads。这样做也是凑效的，不过你的app体积会随着文件上传量的增加而快速增加。heroku的免费账户对单个app大小的限制是300MB。</p>
+</blockquote>
+
+<h3 id="1-在本地安装好carrierwave并测试各项功能是否正常">1. <a href="https://gitcavendish.github.io/2017/How-to-upload-multi-files-in-rails/">在本地安装好carrierwave</a>并测试各项功能是否正常。</h3>
+
+<h3 id="2-amazon-s3上存储桶的建立">2. Amazon S3上存储桶的建立</h3>
+
+<ul>
+  <li>到<a href="https://aws.amazon.com/cn/s3/">Amazon S3</a>上注册账户(会需要用到带master或visa的信用卡)。
+    <ul>
+      <li>根据AWS安全审查指南，创建 IAM 用户</li>
+      <li>到“选择AWS访问类型”这一步时，选择 <strong>编程访问</strong> 的访问类型。</li>
+      <li>到达“权限设置”这一步时，点击 <strong>直接附加现有策略</strong> –》 搜索 “<strong>s3</strong>”  –》勾选 <strong>AmazonS3FullAccess</strong></li>
+    </ul>
+  </li>
+  <li>
+    <p>用户创建好之后会显示 <strong>access key id</strong> 和 <strong>secret access key</strong> 两个密钥并提示让你下载存储密钥的 .csv文件。将这个文件保存在安全的地方，以后可能会用到。</p>
+  </li>
+  <li>找到存储服务中的<strong>S3</strong>，点击进入并创建一个新的bucket,包括名称与区域。</li>
+</ul>
+
+<p>这样就在s3上建立好的存储文件的仓库了。</p>
+
+<h3 id="3-安装figaro来管理s3以及其他服务的密钥">3. 安装figaro来管理s3（以及其他服务）的密钥</h3>
+<blockquote>
+  <p>类似s3这类服务都有密钥设置来保证数据安全和规定用户权限，当某些功能（比如carrierwave）要使用s3服务来存储上传的文件时，就需要在config/initializers/carrierwave.rb中写入s3的密钥来通过验证，不然就无法使用S3来存储上传的图片。
+<a href="https://github.com/laserlemon/figaro">figaro</a> 的作用是安全地将app中各项服务的密钥同步到部署环境的服务器中以便各项服务能够正常使用，而又不需要将储存密钥的文件直接push到github或者heroku引起重大安全问题。</p>
+</blockquote>
+
+<p>在gemifile中：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'figaro'</span>
+</code></pre></div></div>
+
+<p>接着 <code class="language-plaintext highlighter-rouge">bundle</code></p>
+
+<p>记得 <code class="language-plaintext highlighter-rouge">figaro install</code></p>
+<blockquote>
+  <p>这一步会生成一个文件 <strong>config/application.yml</strong> 并将其自动添加到 .gitignore 档中这样这个文件就只会留在本地，以后各个服务商提供的各种服务比如邮件发送，云储存的密钥都会存在这个文件中，然后通过规定的语法在对应的.rb设置文件中安全的调用密钥。而不是将密钥写在不同的.rb文件中最后push的满地都是。</p>
+</blockquote>
+
+<p><img src="/photos/postimages/Snip20170426_13.png" alt="" /></p>
+
+<p>执行<code class="language-plaintext highlighter-rouge">cp config/application.yml config/application.yml.example</code></p>
+
+<p>这一步是为了复制一份config/application.yml并将其重命名为config/application.yml.example作为协作时给同事看的样板（注意不要把密钥写到这里面，这个文件中只提供如何写密钥的格式样本并列出使用了哪些服务的哪些密钥。）yml文件一定要注意不同内容的缩进关系，因为与rb文件不同，在yml中，缩进代表了层级关系，也是一个语法。在config/application.yml中按照下面的格式写好刚刚申请的s3的密钥和储存桶的信息。</p>
+
+<p><strong>config/application.yml</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="ss">production:
+   </span><span class="no">AWS_ACCESS_KEY_ID</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 Access key ID</span>
+
+   <span class="no">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 Secret access key</span>
+
+   <span class="no">AWS_REGION</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 S3 bucket 的 Region 位置</span>
+
+   <span class="no">AWS_BUCKET_NAME</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你设定的 bucket name</span>
+
+ <span class="ss">development:
+   </span><span class="no">AWS_ACCESS_KEY_ID</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 Access key ID</span>
+
+   <span class="no">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 Secret access key</span>
+
+   <span class="no">AWS_REGION</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你的 S3 bucket 的 Region 位置</span>
+
+   <span class="no">AWS_BUCKET_NAME</span><span class="p">:</span> <span class="s2">"xxxx"</span>  <span class="c1"># 你设定的 bucket name</span>
+</code></pre></div></div>
+
+<p><strong>这里的aws_region指的是：</strong></p>
+
+<p><img src="/photos/postimages/Snip20170426_15.png" alt="" /></p>
+
+<p>可到这里查看<a href="http://docs.aws.amazon.com/zh_cn/general/latest/gr/rande.html#s3_region">s3的region列表</a></p>
+
+<h3 id="4-安装-gem-fog-让carrierwave能把文件传往远端存储桶">4. 安装 gem fog 让carrierwave能把文件传往远端存储桶</h3>
+
+<p>fog是一个功能强大的gem,支持很多种存储服务的转接，最近为了使gem更小巧，针对不同服务进行了拆分，比如: fog-aws, fog-aws, fog-google 等，具体说明可以看<a href="https://github.com/fog/fog">fog的官方git</a></p>
+<blockquote>
+  <p>Currently all fog providers are getting separated into metagems to lower the load time and dependency count.
+If there’s a metagem available for your cloud provider, e.g. fog-aws, you should be using it instead of requiring the full fog collection to avoid unnecessary dependencies.</p>
+</blockquote>
+
+<p><a href="https://github.com/carrierwaveuploader/carrierwave">carrierwave的readme中也专门针对fog</a>的使用设置进行了说明,我们可以使用fog也可以使用fog-aws。</p>
+
+<p>在gemfile中：</p>
+
+<p><code class="language-plaintext highlighter-rouge">gem 'fog-aws'</code></p>
+
+<p>在之前多图上传生成的box_uploader.rb文件中修改储存设置，仅本地存储文件时只用写 <code class="language-plaintext highlighter-rouge">storage :file</code>,而现在如果只顾production环境可以直接改成<code class="language-plaintext highlighter-rouge">storage :fog</code>， 但为了兼顾各种环境下的不同情况，我们可以用if语句来设定不同环境下使用什么存储方式：</p>
+
+<p><strong>app/uploaders/box_uploader.rb</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">development?</span>  <span class="c1">#这样我们就分别设置好了在开发环境和产品环境各自用什么存储方式。</span>
+  <span class="n">storage</span> <span class="ss">:file</span>
+<span class="k">elsif</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">production?</span>
+  <span class="n">storage</span> <span class="ss">:fog</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>然后 <code class="language-plaintext highlighter-rouge">touch config/initializers/carrierwave.rb</code> 生成carrierwave的配置文件，并且写好设置：</p>
+
+<p><strong>config/initializers/carrierwave.rb</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">CarrierWave</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="k">if</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">production?</span>                  <span class="c1">#这里同样也用条件语句写明了不同环境用什么设置。</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">fog_provider</span> <span class="o">=</span> <span class="s1">'fog'</span>                  
+    <span class="n">config</span><span class="p">.</span><span class="nf">fog_credentials</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">provider:              </span><span class="s1">'AWS'</span><span class="p">,</span>                        <span class="c1">#这里写明了存储服务的提供商，下面就是各种aws的key</span>
+      <span class="ss">aws_access_key_id:     </span><span class="no">ENV</span><span class="p">[</span><span class="s2">"AWS_ACCESS_KEY_ID"</span><span class="p">],</span>       <span class="c1"># 这样写rails就会自动去figaro之前生成的application.yml中去抓对应名称的key和信息</span>
+                                                             <span class="c1"># 如此这些rb文件被push上去就不会泄露信息</span>
+      <span class="ss">aws_secret_access_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s2">"AWS_SECRET_ACCESS_KEY"</span><span class="p">],</span>   
+
+      <span class="ss">region:                </span><span class="no">ENV</span><span class="p">[</span><span class="s2">"AWS_REGION"</span><span class="p">]</span>            <span class="c1"># 这个区域如果不清楚就去Amazon上查下建立的储存桶的信息</span>
+
+    <span class="p">}</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">fog_directory</span>  <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"AWS_BUCKET_NAME"</span><span class="p">]</span>    <span class="c1"># 这里写明储存桶的名称</span>
+
+
+  <span class="k">else</span>                        <span class="c1">#这里写明非产品环境就存储在本地。</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>然后记得<code class="language-plaintext highlighter-rouge">bundle</code>, 重开。</p>
+
+<h3 id="5-修改gemfile准备push到heroku">5. 修改gemfile准备push到heroku</h3>
+<ul>
+  <li>把 sqlite3 从第7行搬到约第30到40行的group :development, :test do</li>
+  <li>
+    <p>在末尾新增一个 production group，加上 pg 这个 gem</p>
+
+    <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">group</span> <span class="ss">:production</span> <span class="k">do</span>
+    <span class="n">gem</span> <span class="s1">'pg'</span>
+  <span class="k">end</span>
+</code></pre></div>    </div>
+  </li>
+  <li>执行 <code class="language-plaintext highlighter-rouge">bundle</code></li>
+  <li><code class="language-plaintext highlighter-rouge">git add .</code> , <code class="language-plaintext highlighter-rouge">git commit -m "xxx"</code></li>
+</ul>
+
+<p>最后<code class="language-plaintext highlighter-rouge">heroku create</code>，<strong>但在push到heroku之前有一步！！！</strong></p>
+
+<h3 id="6-将configapplicationyml中设定好的机密信息通过figaro同步到heroku">6. 将config/application.yml中设定好的机密信息通过figaro同步到heroku</h3>
+
+<p>执行 <code class="language-plaintext highlighter-rouge">figaro heroku:set -e production</code> ，将production环境下的密钥信息同步到heroku上，如果想查看目前heroku上设置的所有密钥信息可以执行<code class="language-plaintext highlighter-rouge">heroku config</code></p>
+
+<p><img src="/photos/postimages/屏幕快照 2017-04-26 下午8.02.33.jpg" alt="" /></p>
+
+<p>如果以后新增了什么服务，往config/application.yml中添加了新的密钥，记得要再次执行 <code class="language-plaintext highlighter-rouge">figaro heroku:set -e production</code> 将里面的内容同步到heroku，不然新增的服务会因无法通过验证而无法使用。</p>
+
+<h3 id="7-push-heroku">7. push heroku</h3>
+<p>记得push完需要<code class="language-plaintext highlighter-rouge">heroku run rake db:migrate</code></p>
+
+<hr />
+
+<p>部署成功后可以尝试新建几个product，上传几张图片，首先是看图片在heroku能不能显示，如果能的话那就几乎可以说明操作是成功的。</p>
+
+<p>最后我们来回答开头那个问题，public文件夹里的内容使用aws后是什么样的？</p>
+
+<p>到amazon上找到新建的存储桶，一层一层地点，会发现里面的文件结构和本地是一模一样的，仍然是: uploads —&gt; photo —&gt; insert —&gt; 12345678….. —&gt; 同一张图的不同尺寸 .</p>
+
+<p><img src="/photos/postimages/Snip20170426_16.png" alt="" /></p>
+
+<p>其实可以把你的bucket就看做 public这个文件夹，但存储桶中的情况和我们所见到也许并不一样，<a href="https://help.aliyun.com/document_detail/31827.html?spm=5176.doc31834.6.565.nYvOTf">阿里云的一篇说明文</a>档很好地解释了关于对象存储的一些基本概念。</p>

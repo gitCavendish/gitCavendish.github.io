@@ -1,0 +1,432 @@
+<p><em>In this post, all discussions are under the context of instance methods. Things may get different when it comes to class methods.</em></p>
+
+<p>When being asked the question: “What’s the differences among public, protected and private method?” We may answer:</p>
+
+<ul>
+  <li>Public methods are methods that are available to anyone who knows either the class name or the object’s name.</li>
+  <li>Private methods are not accessible outside of the class definition at all, and are only accessible from inside the class when called without <code class="language-plaintext highlighter-rouge">self</code>.</li>
+  <li>From outside the class, protected methods act just like private methods; from inside the class, protected methods are accessible just like public methods.</li>
+</ul>
+
+<p>These statements are not wrong, but not accurate. And what are “inside the class definition” and “outside the class definition”? These are questions that we beginner programmers think we would have understand, but actually we might not.</p>
+
+<h3 id="inside-or-outside">Inside or Outside?</h3>
+
+<p>“Inside the class definition” is easy to understand.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">bark</span>
+    <span class="nb">puts</span> <span class="s2">"WangWang...Wang!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Apparently the area between <code class="language-plaintext highlighter-rouge">class Dog</code> and <code class="language-plaintext highlighter-rouge">end</code> is inside. So logically, areas other than inside are all outside, right? Maybe like this:</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/outside.jpg" alt="" /></p>
+
+<p>This doesn’t help. Let’s recall the first statement:</p>
+
+<blockquote>
+  <p>Public methods are methods that are available to anyone who knows either the class name or the object’s name.</p>
+</blockquote>
+
+<p>When would we involve the <strong>class name</strong> or the <strong>object’s name</strong>? When we done with defining a class like <code class="language-plaintext highlighter-rouge">Dog</code>, there’re many ways we may involve the class name or the object’s name. Some of them are:</p>
+
+<h4 id="1-call-instance-method-directly-on-an-instance-of-this-class">1) call instance method directly on an instance of this class</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">bark</span>
+</code></pre></div></div>
+
+<h4 id="2-pass-an-instance-of-this-class-as-an-argument-to-another-class-method">2) pass an instance of this class as an argument to another class’ method</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">bark</span>
+    <span class="nb">puts</span> <span class="s2">"WangWang...Wang!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Person</span>
+  <span class="k">def</span> <span class="nf">walk_pet</span><span class="p">(</span><span class="n">pet</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"Walking the </span><span class="si">#{</span><span class="n">pet</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">pet</span><span class="p">.</span><span class="nf">bark</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">dog</span> <span class="o">=</span> <span class="no">Dog</span><span class="p">.</span><span class="nf">new</span>
+<span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">walk_pet</span><span class="p">(</span><span class="n">dog</span><span class="p">)</span>
+<span class="c1"># Walking the Dog</span>
+<span class="c1"># WangWang...Wang!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<h4 id="3-when-an-instance-of-this-class-serve-as-another-class-statemeans-they-are-collaborator-objects">3) when an instance of this class serve as another class’ state(means they are collaborator objects)</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">bark</span>
+    <span class="nb">puts</span> <span class="s2">"WangWang...Wang!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Person</span>
+  <span class="nb">attr_reader</span> <span class="ss">:pet</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">pet</span><span class="p">)</span>
+    <span class="vi">@pet</span> <span class="o">=</span> <span class="n">pet</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">)</span>
+<span class="n">bob</span><span class="p">.</span><span class="nf">pet</span><span class="p">.</span><span class="nf">bark</span>
+<span class="c1"># WangWang...Wang!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>What about invoking a public method <strong>inside class definition</strong>? or even inside other class’ class definition</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">bark</span>
+    <span class="nb">puts</span> <span class="s2">"WangWang...Wang!"</span>
+  <span class="k">end</span>
+
+  <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">bark</span>
+<span class="k">end</span>
+<span class="c1"># WangWang...Wang!</span>
+<span class="c1">#  =&gt; nil</span>
+
+<span class="k">class</span> <span class="nc">Cat</span>
+  <span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">bark</span>
+<span class="k">end</span>
+<span class="c1"># WangWang...Wang!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>It works too but we’d not likely to do this in practice.</p>
+
+<p>Through these examples we realize that <strong>“outside the class definition”</strong> means a lot. It could mean “other than class definition”; it could mean “inside other classes’ definition”; it could mean many other situations. Be aware of what is inside and outside class definition are important to understand the difference among public, protected and private method, and thankfully we are clear now.</p>
+
+<h3 id="1-public-methods">1 Public methods</h3>
+
+<p>Things are clear now, public methods are accessible throughout the whole program if we know the class name, or we get an instance of this class, this could be done in more than one way, like assigning the instance to a local variable then pass it to another method, or assigning it to instance variable, or directly instantiating a new instance inside the argument list, and so on.</p>
+
+<h3 id="2-private-methods">2 Private methods</h3>
+
+<blockquote>
+  <p>Private methods are not accessible outside of the class definition at all, and are only accessible from inside the class when called without <code class="language-plaintext highlighter-rouge">self</code>.</p>
+</blockquote>
+
+<p>Let’s verify this statement step by step:</p>
+
+<h5 id="1-not-accessible-outside-of-the-class-definition-at-all">1) not accessible outside of the class definition at all</h5>
+
+<p>First let’s see a workable example:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>Here we catered all the requirements, only call it from inside class definition without prepending a <code class="language-plaintext highlighter-rouge">self</code></p>
+
+<p>Next let’s leave the class definition:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">dream</span> <span class="c1"># most straight way</span>
+<span class="c1"># NoMethodError (private method `dream' called for #&lt;Dog:0x00007fed299e1f88&gt;)</span>
+</code></pre></div></div>
+
+<p>No, not work.</p>
+
+<p>What about other “outside the class definition” scenarios? For other possible scenarios, the final step of all expressions is call the method directly on a <code class="language-plaintext highlighter-rouge">Dog</code> object, so it’s the same with <code class="language-plaintext highlighter-rouge">Dog.new.dream</code>. So they won’t work too.</p>
+
+<h5 id="2-are-only-accessible-from-inside-the-class-when-called-without-self">2) are only accessible from inside the class when called without <code class="language-plaintext highlighter-rouge">self</code></h5>
+
+<p>To verify this we just add a <code class="language-plaintext highlighter-rouge">self</code> infront of <code class="language-plaintext highlighter-rouge">dream</code> in <code class="language-plaintext highlighter-rouge">sleep</code> method</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+</code></pre></div></div>
+
+<p>This time we got <code class="language-plaintext highlighter-rouge">NoMethodError (private method </code>dream’ called for #&lt;Dog:0x00007fb0f6079708&gt;)`</p>
+
+<p>So this not work too. Can we now say that the statement about private is true?</p>
+
+<p>No. When involving inheritance, things changed.</p>
+
+<h5 id="3-private-methods-in-inheritance-hierarchy">3) private methods in inheritance hierarchy</h5>
+
+<p>Let’s take a look at this example:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">BullDog</span> <span class="o">&lt;</span> <span class="no">Dog</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">FrenchBullDog</span> <span class="o">&lt;</span> <span class="no">BullDog</span>
+<span class="k">end</span>
+
+<span class="no">BullDog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+<span class="no">FrenchBullDog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">BullDog</code> and <code class="language-plaintext highlighter-rouge">FrenchBullDog</code> are both descendant classes of <code class="language-plaintext highlighter-rouge">Dog</code>. Rigorously saying, they are not inside <code class="language-plaintext highlighter-rouge">Dog</code>’s class definition. But they can access the private method in the right way too. Let’s perform a further verification:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">BullDog</span> <span class="o">&lt;</span> <span class="no">Dog</span>
+  <span class="k">def</span> <span class="nf">day_dream</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">BullDog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">day_dream</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>Things are getting clear, if we follow the rule “do not prepend any receiver to a private method”, we can actually access private methods inside the whole inheritance hierarchy. But the precondition is superclass’ private methods can be accessed in subclasses, not vice versa.</p>
+
+<p>So we may wanna change the statement to:</p>
+
+<blockquote>
+  <p>Private methods are only accessible inside its first defined class and this class’ subclasses, and are only accessible when called without <code class="language-plaintext highlighter-rouge">self</code>.</p>
+</blockquote>
+
+<p><em>the rule about <code class="language-plaintext highlighter-rouge">self</code> has an exception about private setter method in Ruby</em></p>
+
+<h3 id="3-protect-methods">3 Protect methods</h3>
+
+<p>First we’ll verify this:</p>
+
+<h4 id="1-from-outside-the-class-protected-methods-act-just-like-private-methods">1) From outside the class, protected methods act just like private methods.</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">dream</span>
+</code></pre></div></div>
+
+<p>We got <code class="language-plaintext highlighter-rouge">NoMethodError (protected method 'dream' called for #&lt;Dog:0x00007fb0f786c400&gt;)</code>. Basically the same result with private method.</p>
+
+<p>Now let’s change the example to right usage.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="n">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+</code></pre></div></div>
+
+<p>The above code are calling protected method <code class="language-plaintext highlighter-rouge">dream</code> just like when we were calling a private one. So when we are outside the class definition, we can’t give protected method a receiver, so the first half statement is right so far.</p>
+
+<h4 id="2-from-inside-the-class-protected-methods-are-accessible-just-like-public-methods">2) From inside the class, protected methods are accessible just like public methods.</h4>
+
+<p>What’s “just like public methods”? How this would be like inside the class definition?</p>
+
+<p>Remember the statement “available to anyone who knows either the class name or the object’s name”? Now we need to talk this on the context of “inside class definition”.</p>
+
+<p><strong>Know the class name inside class definition.</strong></p>
+
+<p>How? Anywhere from within the class definition and outside instance method definitions is of the context of the class, we can grasp it by using <code class="language-plaintext highlighter-rouge">self</code></p>
+
+<p><strong>Know the object name inside class definition.</strong></p>
+
+<p>Similarly, when we write <code class="language-plaintext highlighter-rouge">self</code> inside any instance method definitions, we are grasping the instance(object) that are calling this method.</p>
+
+<ol>
+  <li>know object name by instance methods’ <code class="language-plaintext highlighter-rouge">self</code></li>
+</ol>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>It works. Inside instance method we can invoke protected method while prepending the receiver.</p>
+
+<ol>
+  <li>know object’s name by pass in a same type object</li>
+</ol>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep_with</span><span class="p">(</span><span class="n">another_dog</span><span class="p">)</span>
+    <span class="n">another_dog</span><span class="p">.</span><span class="nf">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep_with</span><span class="p">(</span><span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">)</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>This works too.</p>
+
+<p>Let’s incorporate inheritance.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep_with</span><span class="p">(</span><span class="n">another_dog</span><span class="p">)</span>
+    <span class="n">another_dog</span><span class="p">.</span><span class="nf">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">BullDog</span> <span class="o">&lt;</span> <span class="no">Dog</span>
+<span class="k">end</span>
+
+<span class="no">Dog</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep_with</span><span class="p">(</span><span class="no">BullDog</span><span class="p">.</span><span class="nf">new</span><span class="p">)</span>
+<span class="c1"># I am flying!</span>
+<span class="c1">#  =&gt; nil</span>
+</code></pre></div></div>
+
+<p>This works too.</p>
+
+<ol>
+  <li>know object name by class definition’s <code class="language-plaintext highlighter-rouge">self</code></li>
+</ol>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dog</span>
+  <span class="k">def</span> <span class="nf">sleep</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">dream</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">dream</span>
+    <span class="nb">puts</span> <span class="s2">"I am flying!"</span>
+  <span class="k">end</span>
+
+  <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">sleep</span> <span class="c1"># public</span>
+  <span class="nb">self</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">dream</span> <span class="c1"># protected</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Notice the last two line inside class definition, we first called the public method <code class="language-plaintext highlighter-rouge">sleep</code> by using <code class="language-plaintext highlighter-rouge">self.new</code> as receiver, then did the same thing with protected method <code class="language-plaintext highlighter-rouge">dream</code>. The message <code class="language-plaintext highlighter-rouge">"I am flying!"</code> was only printed out one time, then an exception raised.</p>
+
+<p>We got <code class="language-plaintext highlighter-rouge">NoMethodError (protected method 'dream' called for #&lt;Dog:0x00007fb0f786da08&gt;)</code></p>
+
+<p>This partly disproved the statement “From inside the class, protected methods are accessible just like public methods”. We were insdie class definition, we were using protected method <code class="language-plaintext highlighter-rouge">dream</code> as it were a public method, but things went wrong. So it’s not exactly the same with public method.</p>
+
+<h4 id="3-protected-methods-in-inheritance-hierarchy">3) protected methods in inheritance hierarchy</h4>
+
+<p>We’ve discussed private methods under this situation. The answer for protected methods is same. Protected methods are also accessible for the subclasses which inherit from where the protected methods are first defined.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>We wrote so many examples to verify every statement, some of them are not so accurate. But the purpose of this post is not to disprove any statement. The real purpose is to better understand public, protected and private method. At first we might easily mess up the rules, and it seems we have so many details to remember or to notice. But when we step out of all the details and syntax, we just need to be aware of several main points:</p>
+
+<ul>
+  <li>What is the exactly meaning of inside/outside class definition?
+    <ul>
+      <li>the more accurate description is inside current class and its subclasses’s class definition.</li>
+    </ul>
+  </li>
+  <li><strong>Context</strong> and <strong><code class="language-plaintext highlighter-rouge">self</code></strong> is the core to understand.
+    <ul>
+      <li>for public methods: no matter inside or outside class definition, we can invoke public methods by sending it to right objects.</li>
+      <li>for protected methods, they are accessible when:
+        <ul>
+          <li>1) inside method definition</li>
+          <li>2) the receiver is an instance of current class or its subclasses</li>
+        </ul>
+      </li>
+      <li>for private methods they are accessible when:
+        <ul>
+          <li>1) inside method definition</li>
+          <li>2) no receiver.
+            <ul>
+              <li>This constriction make private methods only accssible for current calling object, no receiver implies that the implied receiver is an invisible <code class="language-plaintext highlighter-rouge">self</code>, and this hidden <code class="language-plaintext highlighter-rouge">self</code> has no ambiguity inside a method definition – it can only indicates the current object</li>
+              <li>No receiver also eliminate the possiblity of sending private methods to any other object other than current object since we cannot send a message to “nobody”.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>As we mentioned earlier, <em>In this post, all discussions are under the context of instance methods. Things may get different when it comes to class methods.</em></p>

@@ -1,0 +1,253 @@
+<p>Junior Rails Developer</p>
+
+<h3 id="软体工程部分">软体工程部分</h3>
+
+<p>1 请列举至少7个git指令，并说明他们的作用。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">git init</code> 为当前文件目录建立git本地仓库，开始追踪文件变更</li>
+  <li><code class="language-plaintext highlighter-rouge">git add .</code> 将所有变更加入git本地追踪记录</li>
+  <li><code class="language-plaintext highlighter-rouge">git commit -m "info"</code> 确认添加的所有变更，并记录相关信息</li>
+  <li><code class="language-plaintext highlighter-rouge">git status</code> 查看至上一次commit 以来有哪些文件发生了变更</li>
+  <li><code class="language-plaintext highlighter-rouge">git log</code> 查看git 的历史操作记录</li>
+  <li><code class="language-plaintext highlighter-rouge">git push remotename branchname</code> 将分支branchname 推送到名为 remotename 的远端仓库</li>
+  <li><code class="language-plaintext highlighter-rouge">git push remotename --all</code> 将所有文件推送到名为 remotename 的远端仓库</li>
+  <li><code class="language-plaintext highlighter-rouge">git pull branchname</code> 从远端仓库拉下分支 branchname</li>
+</ul>
+
+<p>2 如何为专案新增连接到一个 remote repository?</p>
+
+<p><code class="language-plaintext highlighter-rouge">git add remote remotename xxxxxx.git</code></p>
+
+<p>3 如果你在github上fork别人一个专案，之后该专案更新，你要怎么更新到最新版本？
+fork之后，该专案会出现在你的github远端仓库中</p>
+
+<p>复制仓库地址后 <code class="language-plaintext highlighter-rouge">git clone repositoryaddress.git</code> 将专案复制到本地</p>
+
+<p><code class="language-plaintext highlighter-rouge">git remote add remotename 你要拉取更新的专案的git地址</code>  添加用于更新的远端地址</p>
+
+<p>if 使用<code class="language-plaintext highlighter-rouge">git fetch remotename</code> 将会拉下在此仓库地址的所有变更，但不会自动merge到你的本地专案</p>
+
+<p>if 使用<code class="language-plaintext highlighter-rouge">git fetch remotename branchname</code> 会拿到某一个分支的变更</p>
+
+<p>接着 <code class="language-plaintext highlighter-rouge">git merge remotename:master</code> 将拉下的内容合并到主干</p>
+
+<p>if 使用<code class="language-plaintext highlighter-rouge">git pull remotename</code> 兼具 fetch 和 merge 的效果。</p>
+
+<hr />
+
+<h3 id="网页开发部分">网页开发部分</h3>
+
+<p>1 如果有个要实践的功能如下：使用者确认购买某商品后，需要在下一个页面秀出成功购买的信息，此外还要把商品的购买信息email给使用者，你会怎么实作？</p>
+
+<p>a. 先安装bootstrap 的flash套件，定义好相关文件，在下一个页面show出成功购买的信息，在对应controller 的对应action（比如orders _ controller 中的 create）下, 在<code class="language-plaintext highlighter-rouge">redirect_to xxx_path</code>，其中<code class="language-plaintext highlighter-rouge">xxx_path</code>应该是订单详情页面路径，后加上一行<code class="language-plaintext highlighter-rouge">flash[:notice] = "感谢您的下单，这是您此次的购物明细"</code></p>
+
+<p>b. <code class="language-plaintext highlighter-rouge">rails g mailer OrderMailer</code> 生成order相关的mailer文件 app/mailers/order _ mailer.rb</p>
+
+<p>c. 在 app/mailers/application _ mailer.rb中 <code class="language-plaintext highlighter-rouge">default from: "xxxxxxx@gmail.com"</code> 设置发出邮件的地址</p>
+
+<p>d. 在 order _ mailer.rb 中定义好 <code class="language-plaintext highlighter-rouge">notify_order_placed</code> 这个method，method 的end前加上 <code class="language-plaintext highlighter-rouge">mail(to: @who.email, subject: "邮件title内容")</code>
+<code class="language-plaintext highlighter-rouge">touch app/views/order_mailer/notify_order_placed.html.erb</code> 生成之前定义好的method的 template，写好页面表单。</p>
+
+<p>e.到对应controller中的生成订单的action下，加入<code class="language-plaintext highlighter-rouge">OrderMailer.notify_order_placed(@order).deliver!</code></p>
+
+<p>f.到config/environments/development.rb 和 config/environments/production.rb 与 config/application.yml 中完成对应的configuration</p>
+
+<p>g.进行本地测试。<a href="http://guides.rubyonrails.org/action_mailer_basics.html#action-mailer-configuration-for-gmail">mailer的内容在官方guide上有说明</a>
+<strong>mailers/xxxxx.rb与controller.rb是很类似的。</strong></p>
+
+<p>2 请列举你知道的几种HTTP status code, 并指出他们的意义。</p>
+
+<p>HTTP status code 即 HTTP 状态码， 是web服务器用来告诉客户端发生了什么事的一种标准化语言。</p>
+
+<p>目前HTTP status code 分为五大类，分别从1到5开头。</p>
+<ul>
+  <li>100-102  信息提示 这是一类临时响应的状态码，代表请求已被接受，需要继续处理。</li>
+  <li>200-207  成功 代表请求已经成功被服务器收到，理解，并接受。</li>
+  <li>300-307  重新定向 代表需要客户端进行进一步操作才能完成请求，后续请求的地址（重新定向目标）在本次响应的Location域中指明。</li>
+  <li>400-4xx  客户端错误  代表客户端发生发生了错误妨碍了服务器的处理。</li>
+  <li>500-510  服务器错误  代表服务器在处理请求的过程中有错误或者状态异常。</li>
+</ul>
+
+<p>最常用的HTTP status code 有：</p>
+
+<blockquote>
+  <ul>
+    <li>200 OK 服务器成功处理了请求(最常见)</li>
+    <li>301/302 Moved Permanently 重新定向 请求的url已经移走。Resoponse 中应该包含一个Location URL ，说明资源现在所处的位置。</li>
+    <li>304 Not Modified 未修改 如果客户端发送了一个带条件的GET请求且该请求已经被允许，而文档的内容（自上次访问以来或者根据请求条件）并没有改变，则服务器返回这个状态码。</li>
+    <li>404 Not Found 未找到资源 请求失败，请求所希望得到的资源未在服务器上找到。</li>
+    <li>500 Internet Server Error 服务器遇到了一个未曾预料的状况，导致了它无法完成对请求的处理。一般来说，这个问题都会在服务器的程序码出错的时候出现。</li>
+  </ul>
+</blockquote>
+
+<hr />
+
+<h2 id="前端部分">前端部分</h2>
+
+<p>1 如果一个div 元素里所有子元素都有 float: left; 这个属性时，这个div 会发生什么情况，为什么？
+所有的子元素都会向左浮动，以父元素左边边界为基准对齐。但某些子元素尺寸较大时可能会导致其突破父元素边界，此时如果要完全包裹子元素，需要添加 <code class="language-plaintext highlighter-rouge">style="overflow: atuo"</code> 给父元素以修复此问题。
+<a href="https://www.youtube.com/watch?v=xFGBNv2KeVU">对float解释得很具体的视频</a></p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/WSPsAEPWSnmglZ8AIvDa_Snip20170329_107.png" alt="Snip20170329_107.png" /></p>
+
+<p>2 css属性 box-sizing 里面的 content-box 和 border-box 之间的差异是什么？</p>
+
+<p>content-box 所定义的元素的width和height 值，没有包含padding和border的宽度，元素的实际宽度等于：自身宽度+padding宽度+border宽度。换句话说它所约束的是内容部分的尺寸。</p>
+
+<p>border-box 所定义的width 和 height 则指的是包含了padding 和 border的宽度，相当于绝对控制了元素整体尺寸。</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/jfj9kvLHQHKhnXkDaUw1_Snip20170329_108.png" alt="Snip20170329_108.png" /></p>
+
+<p>3 如何解决各个浏览器之间，预设元素值属性不同的问题？</p>
+
+<p>使用统一的 reset.css 或 normalize.css 来重新设定，让不同浏览器的元素有相同的预设值。</p>
+
+<hr />
+
+<h2 id="rails-部分">Rails 部分</h2>
+
+<p>1 在routes.rb 中写 resources :posts， 请说明在controller中要定义哪七个对应的action，并简单说明他们的作用。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">index</code> 定义首页（索引，get所有post的资源集）</li>
+  <li><code class="language-plaintext highlighter-rouge">show</code> get到单个post的资源</li>
+  <li><code class="language-plaintext highlighter-rouge">new</code>  get到新建post的表单页面</li>
+  <li><code class="language-plaintext highlighter-rouge">create</code> post（送出并记录）新的post对象</li>
+  <li><code class="language-plaintext highlighter-rouge">edit</code> get到编辑post的表单页面</li>
+  <li><code class="language-plaintext highlighter-rouge">update</code> patch(送出并更新)post的资料</li>
+  <li><code class="language-plaintext highlighter-rouge">destroy</code> delete（删除）特定post</li>
+</ul>
+
+<p>2 view的逻辑太复杂不是好的实践，你会怎么简化？</p>
+
+<p>使用对应的helper封装view中的逻辑判断部分，简化view代码。多个view中有同一段使用率较高的代码可以封装为partial 在view中引用简化代码。</p>
+
+<p>3 如果今天有一个Rails 商业 app， 他需要让产品有不同的规格不同属性，譬如买一件衣服M号1000元，库存10件，S号800元库存5件，你会怎么设计这个Product关联的model?请写出各个model的栏位跟关系。</p>
+
+<p>先生成一个Model叫 <strong>Product</strong> ，包含： title:string description:text</p>
+
+<p>然后生成一个Model <strong>Product _ record</strong> ，包含： product _ id:integer, quantity:integer, size:integer, price:integer</p>
+
+<p>接着设定二者的关系：</p>
+
+<p>在models/product.rb中declare <code class="language-plaintext highlighter-rouge">has_many :product_records</code> <code class="language-plaintext highlighter-rouge">accepts_nested_attributes_for :product_records</code></p>
+
+<p>在models/product _ record.rb 中 declare <code class="language-plaintext highlighter-rouge">belongs_to :product</code></p>
+
+<p>这样专门有一model来存储商品的信息，product就可以拥有不同的参数</p>
+
+<p>4 n+1 query 是什么？可以怎么解决？</p>
+
+<p><em>n+1 query 指的是在进行each do  类似的查询动作时发生的重复查询的问题。</em></p>
+
+<p>比如现在有两个Model,一个叫Group,一个叫Post，我分别在</p>
+
+<p>models/group.rb 中设定</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Group</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+<span class="n">has_many</span> <span class="ss">:posts</span>
+</code></pre></div></div>
+
+<p>models/post.rb 中设定</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+<span class="n">belongs_to</span> <span class="ss">:group</span>
+</code></pre></div></div>
+<p>在groups _ controller中：</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">index</span>
+  <span class="vi">@groups</span> <span class="o">=</span> <span class="no">Group</span><span class="p">.</span><span class="nf">all</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>那么如果我在view中用到这样的语句</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">% @groups.each </span><span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span> <span class="sx">%&gt;
+  &lt;%= group.posts.map(&amp;:title) %&gt;</span>  <span class="c1"># 以阵列形式列出当前group _ id下的所有posts的title</span>
+<span class="o">&lt;</span><span class="sx">% end </span><span class="o">%&gt;</span>
+</code></pre></div></div>
+
+<p>那么执行这个回圈的时候假设 group 有 n 个，那么总共就会进行<strong>n+1</strong>次query</p>
+
+<ul>
+  <li>
+    <p>group第1次： 查询到所有的groups</p>
+  </li>
+  <li>post第1次： 从所有posts中查到 group _ id = 1 的posts的title</li>
+  <li>post第2次： 从所有posts中查到 group _ id = 2 的posts的title</li>
+  <li>post第3次： 从所有posts中查到 group _ id = 3 的posts的title</li>
+  <li>……</li>
+  <li>post第n次： 从所有posts中查到 group _ id = n 的那个post的title</li>
+</ul>
+
+<p>1次对group的query+n次对post的query，就是n+1 次。</p>
+
+<p><strong>解决方法：</strong>
+把groups _ controller 中的 index 修改一下</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@groups</span> <span class="o">=</span> <span class="no">Group</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>那么再执行view中那个回圈时就是</p>
+
+<ul>
+  <li>第一次：查询到所有的groups</li>
+  <li>第二次：从所有posts中一次性去捞 group _ id = 1,2,3…n 的posts的title</li>
+</ul>
+
+<p>https://github.com/flyerhzm/bullet</p>
+
+<p>gem ‘bullet’ 是一个可以侦测app中n+1 query现象的gem，说明文档中也有用一个Demo对此现象简单说明。</p>
+
+<p><code class="language-plaintext highlighter-rouge">rails new test_bullet</code>新建专案</p>
+
+<p>生成两个model:  <code class="language-plaintext highlighter-rouge">post</code> 和 <code class="language-plaintext highlighter-rouge">comment</code> 的构架</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/DTfJbA7EQrqlpsi0cxDz_%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-03-30%20%E4%B8%8B%E5%8D%8811.24.40.png" alt="屏幕快照 2017-03-30 下午11.24.40.png" /></p>
+
+<p>设定model 间的关系：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/yrE3LyC5SEkUGYqr6knQ_Snip20170330_4.png" alt="Snip20170330_4.png" /></p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/d3c1FAMTCCNIv6sbpUA0_Snip20170330_6.png" alt="Snip20170330_6.png" /></p>
+
+<p>posts _ controller 中默认的 index 是这样：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/sdZGGPQQTiWM6bZfBLv7_Snip20170330_8.png" alt="Snip20170330_8.png" /></p>
+
+<p>在 app/views/posts/index.html.erb 中加上一行：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/rMEUrAUR5mZfjpHS8AKw_Snip20170330_7.png" alt="Snip20170330_7.png" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">rails s</code> 运行本地服务器，打开网页首先会弹出一个窗口：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/zJO92eKSA6Wq4SKoQftU_%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-03-30%20%E4%B8%8B%E5%8D%8810.48.30.png" alt="屏幕快照 2017-03-30 下午10.48.30.png" /></p>
+
+<p>x掉后</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/CXoiAgQQTRWOUrVWn4Ht_Snip20170330_3.png" alt="Snip20170330_3.png" /></p>
+
+<p>查看服务器终端：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/s1RTzBIUSoySqZ5sOzi0_Snip20170330_1.png" alt="Snip20170330_1.png" /></p>
+
+<p>总共发起了3次（post数量为2）query</p>
+
+<p>接着修改index</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/CFxDZH51QSOFxv2aic9G_Snip20170330_11.png" alt="Snip20170330_11.png" /></p>
+
+<p>然后再次打开主页， 查看服务器终端：</p>
+
+<p><img src="http://user-image.logdown.io/user/22166/blog/21189/post/1650433/RI27ZDQRQyBMwCWyZgQh_Snip20170330_10.png" alt="Snip20170330_10.png" /></p>
+
+<p>这次只发起了2次query</p>
+
+<p>5 我们经常用以下script 寄电子邮件给所有注册的使用者。但当网站规模增大后在伺服器执行此script时经常会当掉，该如何解决</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">User</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">user</span><span class="o">|</span>
+<span class="o">......</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>解决方法是用batch finding让rails一次只发送给定的数量：</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">User</span><span class="p">.</span><span class="nf">find_each</span><span class="p">(</span><span class="ss">:batch_size</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">user</span><span class="o">|</span>
+<span class="o">......</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>这样一次就只会捞100个user来发送，而不会无限制地发送。
+参考自：（https://ihower.tw/rails/performance.html）ActiveRecord和SQL 部分</p>

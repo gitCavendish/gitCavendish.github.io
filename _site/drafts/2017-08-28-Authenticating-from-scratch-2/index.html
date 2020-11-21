@@ -1,0 +1,83 @@
+<p>remember me 功能的实现在回路上和login极类似，只在其中两个环节有所不同 1 login使用的是session，是临时性的，而 remember me 用到的是 cookies ，可以将指定信息长时间存储在cookies中即使关机也不会影响；2 session使用的是 user.id 作为加密对象，remember me 这里会重新用一个栏位专用的 remember_token 来生成 cookies 中对应的值。</p>
+
+<h4 id="1-准备工作">1 准备工作</h4>
+
+<p>在sessions/new(login)页面加上 remember me 链接</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">%= label_tag "Remember me." %&gt;
+&lt;%=</span> <span class="n">check_box_tag</span> <span class="ss">:remember_me</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="ss">class: </span><span class="s2">"form-control"</span> <span class="o">%&gt;</span>
+</code></pre></div></div>
+
+<p>登陆时如果勾选，会多送出一组数据 <code class="language-plaintext highlighter-rouge">:rememeber_me =&gt; "1"</code></p>
+
+<p>增加一个 remember_token 栏位来储存生成 cookies 要用的摘要，记得migrate</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rails</span> <span class="n">g</span> <span class="n">migration</span> <span class="n">add_remember_token_to_users</span> <span class="n">remember_token</span><span class="ss">:string</span>
+</code></pre></div></div>
+
+<p><strong>写一个function来生成相应栏位token</strong></p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>  <span class="c1"># 使用时会传一个 :symbol 值，这样就会抓到指定栏位</span>
+    <span class="nb">self</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="no">SecureRandom</span><span class="p">.</span><span class="nf">urlsafe_base64</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">save</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="2-到controller中接手-view-传过去的-1">2 到controller中接手 view 传过去的 “1”</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by_email</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:email</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="o">&amp;&amp;</span> <span class="n">user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:password</span><span class="p">])</span>
+      <span class="n">session</span><span class="p">[</span><span class="ss">:user_login</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="nf">id</span>
+ <span class="o">+</span>    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="ss">:rememeber_me</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span>
+ <span class="o">+</span>      <span class="n">user</span><span class="p">.</span><span class="nf">generate_token</span><span class="p">(</span><span class="ss">:remember_token</span><span class="p">)</span>
+ <span class="o">+</span>      <span class="n">cookies</span><span class="p">.</span><span class="nf">permanent</span><span class="p">[</span><span class="ss">:rememeber_user</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="nf">remember_token</span>
+ <span class="o">+</span>    <span class="k">end</span>
+      <span class="n">redirect_to</span> <span class="n">root_path</span>
+      <span class="n">flash</span><span class="p">[</span><span class="ss">:notice</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Successfully logged in."</span>
+    <span class="k">else</span>
+      <span class="n">render</span> <span class="ss">:new</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>这样就能在用户勾选rememeber_me之后生成一个remember_token并基于此生成并固定一个cookies <code class="language-plaintext highlighter-rouge">:remember_user</code> 到浏览器中，后面会用到他们到数据库中抓user</p>
+
+<h4 id="3-重新定义-current_user">3 重新定义 current_user</h4>
+
+<p>现在登入有两种情况了，一是不勾选rememeber_me，这会使用基于session的登陆，二是勾选，这会用到cookies的部分</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+
+  <span class="k">def</span> <span class="nf">current_user</span>
+    <span class="k">if</span> <span class="n">session</span><span class="p">[</span><span class="ss">:user_login</span><span class="p">]</span>
+      <span class="vi">@current_user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="ss">:user_login</span><span class="p">])</span>
+    <span class="k">elsif</span> <span class="n">cookies</span><span class="p">[</span><span class="ss">:rememeber_user</span><span class="p">]</span>
+      <span class="vi">@current_user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by_remember_token</span><span class="p">(</span><span class="n">cookies</span><span class="p">[</span><span class="ss">:rememeber_user</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+</code></pre></div></div>
+
+<h4 id="4-logout-动作中添加处理-cookies-的部分">4 logout 动作中添加处理 cookies 的部分</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">destroy</span>
+    <span class="n">session</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="ss">:user_login</span><span class="p">)</span>
+    <span class="n">cookies</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="ss">:remember_user</span><span class="p">)</span>
+    <span class="n">redirect_back</span><span class="p">(</span><span class="ss">fallback_location: </span><span class="n">root_path</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="5-测试">5 测试</h4>
+
+<p>到登陆页面尝试勾选和不勾选两种情况。</p>
+
+<ul>
+  <li>勾选情况下到chorome dev tool 的 application 面板侧边栏的 cookies 中查看有没有 remember_user 的摘要值。并尝试退出浏览器重开，看看登陆状态是否连续。点击logout 看cookies 中的remember_user是否被清除。</li>
+  <li>不勾选情况下要确认退出浏览器后重新开会丢失登陆状态，并且cookies中没有remember_user的摘要值。</li>
+</ul>
+
+<p>下一篇会写如何实现密码重置功能，基本思路仍然与前面内容有重叠，同样是使用一个栏位的token来验证密码重置申请，只不过会新增一个 password_resets_controller ，要考虑重置申请的有效期限问题，流程上会稍复杂。</p>

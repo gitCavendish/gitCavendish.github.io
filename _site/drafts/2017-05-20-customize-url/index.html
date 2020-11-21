@@ -1,0 +1,172 @@
+<p>Rails中如果我们用 <code class="language-plaintext highlighter-rouge">resources :users</code> 这种路由写法，那么user的show页面网址一般都是 /users/24 , /users/108 … 这样，这样有一个坏处是很容易猜到有多少笔user的资料。</p>
+
+<hr />
+
+<blockquote>
+  <p>Notably, the Rails routing system calls to_param on models to get a value for the :id placeholder. ActiveRecord::Base#to_param returns the id of a model, but you can redefine that method in your models. For example, given</p>
+  <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span>
+  <span class="k">def</span> <span class="nf">to_param</span>
+    <span class="s2">"</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="nb">name</span><span class="p">.</span><span class="nf">parameterize</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>  </div>
+  <p>we get:
+<code class="language-plaintext highlighter-rouge">user_path(@user) # =&gt; "/users/357-john-smith"</code>
+<a href="http://guides.rubyonrails.org/active_support_core_extensions.html">Rails Guide 出处</a></p>
+</blockquote>
+
+<p>在Rails中，默认使用 <code class="language-plaintext highlighter-rouge">to_param</code> method处理 <code class="language-plaintext highlighter-rouge">params[:id]</code> 以及 <code class="language-plaintext highlighter-rouge">@user</code> 拿到的数据是什么样子。Rails内建默认的<code class="language-plaintext highlighter-rouge">to_param</code>的method是 <code class="language-plaintext highlighter-rouge">"self.id"</code>,上面的例子中我们在需要修改url的Model中重新定义了这个method以达到改写目的。</p>
+
+<p><code class="language-plaintext highlighter-rouge">to_param</code> 会默认使用<code class="language-plaintext highlighter-rouge">to_s</code>的方法来转换一次传进的数据：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="mi">123678</span><span class="p">.</span><span class="nf">to_param</span>  
+<span class="o">=&gt;</span> <span class="s2">"123678"</span>
+</code></pre></div></div>
+
+<p>在controller中常会用到：
+<code class="language-plaintext highlighter-rouge">@user = User.find(params[:id])</code>或者</p>
+
+<p><code class="language-plaintext highlighter-rouge">@user = User.find_by_member_id(params[:id])</code>(等同于<code class="language-plaintext highlighter-rouge">@user = User.find_by(member_id: params[:id])</code>)</p>
+
+<p>这种查找object的方法，一个重点是 <code class="language-plaintext highlighter-rouge">find</code> 这个方法会<a href="http://api.rubyonrails.org/classes/ActiveRecord/FinderMethods.html#method-i-find">默认对将要拿去query资料的字串（比如 params[:id]传来的字串）先进行 <code class="language-plaintext highlighter-rouge">to_i</code> 处理：</a></p>
+<blockquote>
+  <p>Find by id - This can either be a specific id (1), a list of ids (1, 5, 6), or an array of ids ([5, 6, 10]). If one or more records can not be found for the requested ids, then RecordNotFound will be raised. If the primary key is an integer, find by id coerces its arguments using to_i.</p>
+</blockquote>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="s2">"6ytg89k03re"</span><span class="p">.</span><span class="nf">to_i</span>
+ <span class="o">=&gt;</span> <span class="mi">6</span>
+
+ <span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="s2">"um1xb90pr"</span><span class="p">.</span><span class="nf">to_i</span>
+ <span class="o">=&gt;</span> <span class="mi">0</span>
+
+ <span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">002</span> <span class="o">&gt;</span> <span class="s2">"mc7819lkh0e"</span><span class="p">.</span><span class="nf">to_i</span>
+ <span class="o">=&gt;</span> <span class="mi">0</span>
+
+ <span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">003</span> <span class="o">&gt;</span> <span class="s2">"1945pxq89tf"</span><span class="p">.</span><span class="nf">to_i</span>
+ <span class="o">=&gt;</span> <span class="mi">1945</span>
+
+ <span class="mf">2.3</span><span class="o">.</span><span class="mi">1</span> <span class="p">:</span><span class="mo">003</span> <span class="o">&gt;</span> <span class="s2">"123-caterpiller-big"</span><span class="p">.</span><span class="nf">to_i</span>
+ <span class="o">=&gt;</span> <span class="mi">123</span>
+</code></pre></div></div>
+
+<p>也就是说 <code class="language-plaintext highlighter-rouge">to_i</code> 方法只会保留以数字开头的连续的整数，后面的所有东西都会略去。<strong>但注意 <code class="language-plaintext highlighter-rouge">find_by</code> 方法不会，传什么东西过来，find_by 就会拿什么去query。</strong> find_by 拿到 “123-caterpiller-big” 就会直接拿这整个字串去query 而不会像 find 那样只留下 123 。</p>
+
+<hr />
+
+<p>上面是我们基本会用到的基础资料，下面用一个实例来看看如何自定义url。假设我们现在有一个 Product 的 model，有 title , description 等栏位，现在我们想把show页面的网址改掉，不用 resources :products 默认的后面跟ID的方式，比如 products/12 , products/30 这样的网址。</p>
+
+<h3 id="1-把网址改成productsid-producttitle">1 把网址改成products/id-product.title</h3>
+<p>因为我们可以redefine <code class="language-plaintext highlighter-rouge">to_param</code>,仿造guide 中的写法我们可以到 <strong>product.rb</strong> 中：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Product</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+
+    <span class="k">def</span> <span class="nf">to_param</span>
+      <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">title</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">end</span>
+
+<span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>如此，在controller里，<code class="language-plaintext highlighter-rouge">@product = Product.find(params[:id])</code> 这一行 params[:id] 带来的数据就会是 “product的ID”-“product的title” 这样的组合，比如 “35-niceshoe” 这样的字串， 但find拿到会会先 <code class="language-plaintext highlighter-rouge">to_i</code>（就只剩下前面的35） 然后去资料库比对id。所以这样改to_param没有影响controller 拿id去 query资料。</p>
+
+<p>view里面 <code class="language-plaintext highlighter-rouge">product_path(@product)</code> 中 <code class="language-plaintext highlighter-rouge">@product</code> 不经过处理直接呈现原来的字串，变成  35-niceshoe ，所以网址就会变成 /products/35-niceshoe 。</p>
+
+<h3 id="2-网址改成-uuid">2 网址改成 <a href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%94%AF%E4%B8%80%E8%AF%86%E5%88%AB%E7%A0%81">uuid</a></h3>
+
+<p>比如 /products/e8055bda-49da-4ea6-8e6a-dde0c7a4d3f5 这样的网址，那首先我们需要：</p>
+
+<p>1.给product加一个栏位来存uuid;
+2.给以前没有uuid的product加上uuid;</p>
+
+<p><code class="language-plaintext highlighter-rouge">rails migration add_uuid_column_to_product</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddTokenToProducts</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">5.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">add_column</span> <span class="ss">:products</span><span class="p">,</span> <span class="ss">:random_token</span><span class="p">,</span> <span class="ss">:string</span>        <span class="c1">#用random_token这个栏位来存uuid</span>
+    <span class="n">add_index</span> <span class="ss">:products</span><span class="p">,</span> <span class="ss">:random_token</span><span class="p">,</span> <span class="ss">:unique</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="c1">#加上索引</span>
+
+    <span class="no">Product</span><span class="p">.</span><span class="nf">find_each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span>                            <span class="c1">#给所有products生成uuid并存进他们的random_token栏位</span>
+      <span class="nb">p</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="ss">:random_token</span> <span class="o">=&gt;</span> <span class="no">SecureRandom</span><span class="p">.</span><span class="nf">uuid</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">rake db:migrate</code></p>
+
+<p>接着到 <strong>product.rb</strong> 中加：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Product</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+
+    <span class="n">before_create</span> <span class="ss">:generate_random_token</span>  <span class="c1">#确保新建product前生成uuid</span>
+
+    <span class="k">def</span> <span class="nf">to_param</span>                          <span class="c1">#让传的数据变成product自己的random_token</span>
+      <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">random_token</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">end</span>
+
+    <span class="kp">protected</span>
+
+    <span class="k">def</span> <span class="nf">generate_random_token</span>             <span class="c1">#如果product的random_token为空则生成一个uuid</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nf">random_token</span> <span class="o">||=</span> <span class="no">SecureRandom</span><span class="p">.</span><span class="nf">uuid</span>
+    <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>在 controller 里， 原来的<code class="language-plaintext highlighter-rouge">find(params[:id])</code> 这里就要改成 <code class="language-plaintext highlighter-rouge">find_by_random_token(param[:id])</code>。如果用 find 那么 params[:id] 传进来的 uuid 比如 e8055bda-49da-4ea6-8e6a-dde0c7a4d3f5” 一串经过 <code class="language-plaintext highlighter-rouge">to_i</code> 的处理，这个例子中会返回 0 ， 拿着这个 0 去比对id查询资料肯定会失败的，所以这里用 <code class="language-plaintext highlighter-rouge">find_by</code> 拿着整个uuid 去查询，而且是 find_by_random_token 也就是比对 random_token 去找而不是去找 product的 id 。</p>
+
+<p>view里面的 <code class="language-plaintext highlighter-rouge">product_path(@product)</code> 就不用改了，因为 <code class="language-plaintext highlighter-rouge">@product</code> 拿到的是整个 “e8055bda-49da-4ea6-8e6a-dde0c7a4d3f5”，所以生成的网址是 /products/e8055bda-49da-4ea6-8e6a-dde0c7a4d3f5</p>
+
+<h3 id="3-指定位数的uuid--producttitle">3 指定位数的uuid + product.title</h3>
+
+<p>/products/35-niceshoe 很容易让人猜到有多少笔资料</p>
+
+<p>/products/e8055bda-49da-4ea6-8e6a-dde0c7a4d3f5 太丑</p>
+
+<p>如果我想要有一定的隐秘性而又要有一定的识别度，比如 /products/e8055bd-niceshoe 这样的网址呢</p>
+
+<p>思路：</p>
+
+<blockquote>
+  <p>def to_param
+    “#{self.random_token}-#{self.title}”
+  end</p>
+</blockquote>
+
+<p>self.random_token 拿到的是整个 uuid， 那就去限制存入 random_token 整个 column 中的 uuid 的位数。因此到 product.rb 中修改 <code class="language-plaintext highlighter-rouge">generate_random_token</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Product</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+
+  <span class="k">def</span> <span class="nf">generate_random_token</span>
+  <span class="c1"># self.random_token ||= SecureRandom.uuid</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">random_token</span> <span class="o">||=</span> <span class="no">SecureRandom</span><span class="p">.</span><span class="nf">uuid</span><span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">7</span><span class="p">]</span> <span class="c1"># 这样存进random_token的就只有前面7位的uuid</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>controller 跟第二种情况一样需要用 <code class="language-plaintext highlighter-rouge">find_by</code> 传完整的 <code class="language-plaintext highlighter-rouge">to_param</code> 那么传过来会是 “e8055bd-niceshoe” 。显然拿着整个带title的字串去比对资料库里只有7位的random_token是会报错的，所以在controller中会去query product 的地方（edit, update, destory …）都也要限制用前7位，所以写法是</p>
+
+<p><code class="language-plaintext highlighter-rouge">@product = Product.find_by_random_token(params[:id][0..7])</code></p>
+
+<p>这样一来网址是中文都可以的，因为只取了前面7位uuid去查询。比如可以使用 /products/aab0c24a-中文商品名 这样的网址也没问题。</p>
+
+<p>–</p>
+
+<h4 id="总结">总结</h4>
+
+<ul>
+  <li>
+    <p>总体思路是首先 redefine <code class="language-plaintext highlighter-rouge">to_param</code> 决定  parmas[:id] 和 @product 会拿到什么？</p>
+  </li>
+  <li>
+    <p>其实要考虑 <code class="language-plaintext highlighter-rouge">find</code> 和 <code class="language-plaintext highlighter-rouge">find_by</code> 的区别，想好用什么去query 资料更合理。</p>
+  </li>
+  <li>
+    <p>最后要检查所有会查询 product 的地方，考虑传过来的会是什么，这里会不会经过其他处理再去query资料。</p>
+  </li>
+  <li>
+    <p>报错的时候首先看看用来 query 所传的数据是什么？数据为什么是这样？为什么拿着这个去query会报错？</p>
+  </li>
+</ul>

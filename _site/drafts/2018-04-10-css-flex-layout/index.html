@@ -1,0 +1,509 @@
+<h3 id="1-what-is-flex-layout-system">1 What is flex layout system?</h3>
+
+<blockquote>
+  <p>Flexbox provides tools to allow rapid creation of complex, flexible layouts, and features that historically proved difficult with CSS.  –from MDN</p>
+</blockquote>
+
+<p>Flexbox 提供工具让我们能快速建立起复杂而灵活的排版布局，而实现这一目的对以往的css来说是困难的。</p>
+
+<h3 id="2-why-flexbox">2 Why Flexbox?</h3>
+
+<p>https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox#Why_Flexbox</p>
+<blockquote>
+  <p>For a long time, the only reliable cross browser-compatible tools available for creating CSS layouts were things like floats and positioning. These are fine and they work, but in some ways they are also rather limiting and frustrating.<br />
+长久以来，能够跨浏览器兼容的，用来建立css排版的工具只有两个： <code class="language-plaintext highlighter-rouge">floats</code> 和 <code class="language-plaintext highlighter-rouge">positioning</code>。它们可以奏效但在某些地方他们会收到限制或让使用者感到挫败。</p>
+</blockquote>
+
+<blockquote>
+  <p>The following simple layout requirements are either difficult or impossible to achieve with such tools, in any kind of convenient, flexible way: <br />
+以灵活的方式实现下面这些简单的排版需求对于传统css来说要么是不可能的，要么是很难实现的：</p>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>Vertically centering a block of content inside its parent.  <br />
+让一个块级元素在它的parent容器中垂直居中。</li>
+    <li>Making all the children of a container take up an equal amount of the available - width/height, regardless of how much width/height is available.     <br />
+让一个容器中的所有子元素占据同等大小的长度或宽度，同时不用理会具体的 width/height 数值。</li>
+    <li>Making all columns in a multiple column layout adopt the same height even if they contain a different amount of content. <br />
+当有多个columns存在，并且每个column中的内容长度不相等时，让所有columns保持等高。</li>
+  </ul>
+</blockquote>
+
+<p><strong>css flex layout system 最小构成单位</strong></p>
+
+<ul>
+  <li>1 flex container 即flex外层容器</li>
+  <li>2 flex item 容器内部可应用规则的子元素</li>
+</ul>
+
+<p>1包含2， flex container 并不是一个 <code class="language-plaintext highlighter-rouge">.class</code>，他是 <code class="language-plaintext highlighter-rouge">display</code>这个property的value–<code class="language-plaintext highlighter-rouge">display: flex;</code>。 他可以是任意 block level 或者 inline level 的元素</p>
+
+<p>一个 flex container 中可以包含无数个 flex items</p>
+
+<p><strong>css flex layout system 计算基础</strong></p>
+
+<ul>
+  <li>外层容器的总宽度</li>
+  <li>内层子元素的自身宽度，设置<code class="language-plaintext highlighter-rouge">flex-basic</code>属性后的基础宽度</li>
+</ul>
+
+<p>二者的差值用来分配 flex-grow 和 flex-shrink 的比例</p>
+
+<p>### How it works</p>
+
+<p>Basic Model</p>
+
+<p><img src="https://mdn.mozillademos.org/files/3739/flex_terms.png" alt="" /></p>
+
+<ul>
+  <li>flex 容器对内部元素的控制分两个方向，横向 <strong>Main Axis</strong> 和 纵向 <strong>Cross Axis</strong></li>
+  <li>容器内壁上边缘定义为 cross start 点， 对应的下边缘定义为 cross end 点。横向上则是左边为 main start， 右边是 main end。</li>
+</ul>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2017-11-01+%E4%B8%8B%E5%8D%883.29.17.png" alt="" /></p>
+
+<hr />
+
+<h3 id="3-具体使用">3 具体使用</h3>
+
+<p>案例准备：</p>
+
+<p>案例在Rails中展示，所以没有引入stylesheets的代码。</p>
+
+<p>html页面由一个简单的div包裹6个子元素</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-1"</span><span class="nt">&gt;</span>Item1<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-2"</span><span class="nt">&gt;</span>Item2<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-3"</span><span class="nt">&gt;</span>Item3<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-4"</span><span class="nt">&gt;</span>Item4<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-5"</span><span class="nt">&gt;</span>Item5<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-6"</span><span class="nt">&gt;</span>Item6<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>css 加上了简单的样式</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">html</span><span class="o">,</span> <span class="nt">body</span> <span class="p">{</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">15px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.container</span> <span class="p">{</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+  <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">1.5em</span><span class="p">;</span>
+  <span class="nl">background-color</span><span class="p">:</span> <span class="m">#ffeead</span><span class="p">;</span>
+  <span class="nl">border</span><span class="p">:</span> <span class="m">5px</span> <span class="nb">solid</span> <span class="m">#ffcc5c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item</span> <span class="p">{</span>
+  <span class="nl">color</span><span class="p">:</span> <span class="no">white</span><span class="p">;</span>
+  <span class="nl">background-color</span><span class="p">:</span> <span class="no">tomato</span><span class="p">;</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">5px</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">8px</span> <span class="m">12px</span><span class="p">;</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">5px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>初始效果:</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%888.43.10.png" alt="" /></p>
+
+<p><em>所有截图演示基于 iPad Pro 分辨率， 1024 x 1366</em></p>
+
+<hr />
+
+<h4 id="31-首先要指定外层容器">3.1 首先要指定外层容器</h4>
+
+<p>外层容器是 <code class="language-plaintext highlighter-rouge">&lt;div class="container"&gt;</code></p>
+
+<p>现在给 <code class="language-plaintext highlighter-rouge">.container</code> 加上新的 property/value 对： <code class="language-plaintext highlighter-rouge">display: flex;</code></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+  <span class="c">/* other properties */</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>container中的子元素排布立即由垂直堆叠变为横向排布，并且默认居左对齐。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%888.49.58.png" alt="" /></p>
+
+<p>另一种情况是将外层容器设为 <code class="language-plaintext highlighter-rouge">display:inline-flex;</code></p>
+
+<p>这会使外层容器具有inline特性，横向上，只在视窗中占据适应内容宽度的空间。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%888.56.07.png" alt="" /></p>
+
+<h4 id="32-确定堆叠轴向">3.2 确定堆叠轴向</h4>
+
+<p>默认情况下是横向堆叠，如果写出来就是 <code class="language-plaintext highlighter-rouge">flex-direction: row;</code>。如果想要纵向堆叠则是 <code class="language-plaintext highlighter-rouge">flex-direction: column;</code> 效果会和初始效果相同，所有子元素纵向堆叠占满容器。</p>
+
+<h4 id="33-确定堆叠顺序">3.3 确定堆叠顺序</h4>
+
+<p>可以使用 <code class="language-plaintext highlighter-rouge">column-reverse</code> 或 <code class="language-plaintext highlighter-rouge">row-reverse</code> 来反转排列顺序。</p>
+
+<hr />
+
+<h4 id="4-横向排布时内部元素的操控">4 横向排布时内部元素的操控</h4>
+
+<h5 id="41-使用-flex-wrap-wrap-确保过多的子元素不会撑破外层容器">4.1 使用 <code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code> 确保过多的子元素不会撑破外层容器。</h5>
+
+<p>首先尝试加更多的子元素。目前有6个，比如加到12个。从9开始的元素就撑破了外层flex容器。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%889.10.16.png" alt="" /></p>
+
+<p>加上<code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code>后</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%889.13.16.png" alt="" /></p>
+
+<p>默认情况下，flexbox 是不允许内部元素进行换行的。除非加上了 <code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code>。后面的例子没有特殊说明都会是带有<code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code>设置的。</p>
+
+<h5 id="42-统一内部子元素的宽度基数">4.2 统一内部子元素的宽度基数</h5>
+
+<p>上面例子中由于内容更多的子元素会比前面的宽，会导致宽度的不一致。</p>
+
+<p>可以使用 <code class="language-plaintext highlighter-rouge">flex: 100px;</code> 或 <code class="language-plaintext highlighter-rouge">flex: 15%;</code> 指定子元素的宽度基数。注意这个propertie是用在子元素身上的。<strong>准确的写法是 <code class="language-plaintext highlighter-rouge">flex-basic: x</code>。这个基数的作用不仅仅是用来指定宽度，也是为后面计算剩余空间或不足空间的时候的基础。</strong></p>
+
+<p><strong>如果把flex设为 200px</strong></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="o">&gt;</span> <span class="o">*</span> <span class="p">{</span>
+<span class="c">/* other properties */</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">200px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%889.35.04.png" alt="" /></p>
+
+<p>如果给 <code class="language-plaintext highlighter-rouge">150px</code></p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%889.36.20.png" alt="" /></p>
+
+<p>如果给 <code class="language-plaintext highlighter-rouge">1px</code>！这里并没有出现特别的情况，如果给出的最小尺寸小于了元素默认的尺寸，那么子元素也仍然会以最小适应宽度自动排列整齐。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8810.50.09.png" alt="" /></p>
+
+<p>这里的基本规则是，尽量先约束靠前的子元素，让其接近给出的最小宽度值。如果后面留有少量元素会自动拉伸填满一行。</p>
+
+<h5 id="43-flex-direction--flex-wrap--flex-row">4.3 <code class="language-plaintext highlighter-rouge">flex-direction</code> + <code class="language-plaintext highlighter-rouge">flex-wrap</code> = <code class="language-plaintext highlighter-rouge">flex-row</code></h5>
+
+<p><code class="language-plaintext highlighter-rouge">flex-direction</code> 和 <code class="language-plaintext highlighter-rouge">flex-wrap</code> 可以合并为一个 <code class="language-plaintext highlighter-rouge">flex-row</code> 属性，给出值的顺序是先 direction 后 wrap</p>
+
+<p><code class="language-plaintext highlighter-rouge">flex-flow: row wrap;</code></p>
+
+<h5 id="44-改变元素占领剩余行宽的比例">4.4 改变元素占领剩余行宽的比例</h5>
+
+<p>先将例子中的后面6个子元素剔除，恢复到左对齐的状态。</p>
+
+<p>并去掉css中子元素的 flex 属性。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%888.49.58.png" alt="" /></p>
+
+<p>前面给子元素加上的 <code class="language-plaintext highlighter-rouge">flex:</code> 属性的值是带有单位的，指定他们的最小宽度。<code class="language-plaintext highlighter-rouge">flex:</code> 属性还有另外一个用法，那就是不带单位的。<strong>更精确的写法是<code class="language-plaintext highlighter-rouge">flex-grow: x</code></strong></p>
+
+<p>比如 <code class="language-plaintext highlighter-rouge">flex: 1;</code> <code class="language-plaintext highlighter-rouge">flex: 3</code> 等。</p>
+
+<p><strong>不带单位的值代表的是比例。这个比例是针对容器中剩余空间的，在这个案例中就是右边的空位。来看下不同单位针对不同元素的含义。</strong></p>
+
+<p><strong>对所有元素统一设置：</strong></p>
+
+<ul>
+  <li>给所有元素设置 ‘flex: 1;’，含义是，每一个元素占领剩余空间的比例是<code class="language-plaintext highlighter-rouge">1:1:1:1:1:1</code>实际效果就是每个元素宽度一样，并占满容器宽度。</li>
+  <li>给所有元素设置 ‘flex: 2;’，含义是，每一个元素占领剩余空间的比例是<code class="language-plaintext highlighter-rouge">2:2:2:2:2:2</code> 实际效果还是每个元素宽度一样，并占满容器宽度。</li>
+</ul>
+
+<p><strong>对单个元素进行设置：</strong></p>
+
+<p>比如对 item6 设置 <code class="language-plaintext highlighter-rouge">flex: 1;</code></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-6</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8811.04.54.png" alt="" /></p>
+
+<p>可以看到前面5个没变，item6拿到了所有剩余空间。语义上就是每一个元素占领剩余空间的比例是<code class="language-plaintext highlighter-rouge">0:0:0:0:0:1</code> ，也就是 item6 没有竞争对手，拿到所有剩余空间。那么这里单个元素无论是多少其实是没有影响的，因为其他元素都不参与。</p>
+
+<p><strong>分别对多个元素设置</strong></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-2</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-3</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8811.16.51.png" alt="" /></p>
+
+<p>对item1,2,3分别设置了 <code class="language-plaintext highlighter-rouge">flex:</code> 1,2,3。</p>
+
+<p>那么就是 item1, item2, item3 分别拿到剩余空间的比例是 1:2:3</p>
+
+<p>注意这里每个元素拿到的都是增量，不一定他们的宽度比会刚好是 123。</p>
+
+<p>可以用一个极端的例子说明，比如给 item3 设置改为 <code class="language-plaintext highlighter-rouge">flex: 9999;</code>。</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-2</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-3</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">9999</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8811.21.32.png" alt="" /></p>
+
+<p>item1和item2并没有因为比例小而压缩。因为是比例切分的是剩余空间，只是额外加给子元素的，这里的效果就是 item3几乎占领了所有剩余空间。另外两个元素则几乎和原来的尺寸一样，至少用肉眼是看不出差别的，item1 只分到剩余空间的 1/1002， 而item2 只分到剩余空间的 2/1002，都几乎可以忽略。</p>
+
+<h5 id="45-剩余行宽的比例--最小宽度">4.5 剩余行宽的比例 + 最小宽度</h5>
+
+<p>再给 item1 的 flex 属性后加上一个最小宽度值，可以约束其最小宽度，优先级高于比例分配。</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span> <span class="m">200px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-2</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-3</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">9999</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8811.30.11.png" alt="" /></p>
+
+<p>可以看到由于 item1 变宽了，整行容器剩余宽度也少了，所以 item3 也变窄了，但它拿到的比例是不变的。如果将 item1 设置得很宽，那么其他元素就可以被挤到下一行，如果item3也被挤下去的话，那么它仍会拿到下一行几乎所有的剩余空间。(会换行的前提是父容器添加有<code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code>属性)</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span> <span class="m">1200px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-2</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-3</span> <span class="p">{</span>
+  <span class="nl">flex</span><span class="p">:</span> <span class="m">9999</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-12+%E4%B8%8B%E5%8D%8811.34.24.png" alt="" /></p>
+
+<h5 id="46-flex-shrink">4.6 flex-shrink</h5>
+
+<p>定义当容器空间被压缩时，某个元素减少宽度的比例。比例的基础则是</p>
+
+<p>所有子元素最小宽度的和 - 当前容器的宽度</p>
+
+<p>flex-grow 拿到的是剩余空间的指定比例进行增量处理。</p>
+
+<p>flex-shrink 则拿到的是不足的那部分空间的指定比例进行减量处理，也就是分配到的比例越大，被压缩至临界点(当所有子元素到达指定的最小宽度)之后，被缩小的速度也就越快。</p>
+
+<p>首先去掉 父容器的   <code class="language-plaintext highlighter-rouge">flex-wrap: wrap;</code> 让所有元素集中在一行</p>
+
+<p>只保留item1和item2，并分别加上 <code class="language-plaintext highlighter-rouge">flex-basic: 500px;</code>。指定宽度基数，也就是用来计算剩余空间或者不足空间的基数。</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">flex-basis</span><span class="p">:</span> <span class="m">500px</span><span class="p">;</span>
+  <span class="nl">flex-shrink</span><span class="p">:</span> <span class="m">5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item-2</span> <span class="p">{</span>
+  <span class="nl">flex-basis</span><span class="p">:</span> <span class="m">500px</span><span class="p">;</span>
+  <span class="nl">flex-shrink</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这会让外层容器留给内部子元素的宽度小于 1000px(500+500) 时，将不够的那部分宽度按比例从 item1 和 item2 宽度中扣除，扣除比例是 5:1 也就是从 item1中扣除 5/6， item2 扣除 1/6</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/shrink.gif" alt="" /></p>
+
+<h5 id="47-flex-是一个快捷属性可以拆开用">4.7 flex 是一个快捷属性，可以拆开用。</h5>
+
+<p><code class="language-plaintext highlighter-rouge">flex-grow: 1</code> == <code class="language-plaintext highlighter-rouge">flex: 1</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">flex-basis: 200px</code> == <code class="language-plaintext highlighter-rouge">flex: 200px</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">flex: 1 200px</code> == <code class="language-plaintext highlighter-rouge">flex-grow: 1</code> + <code class="language-plaintext highlighter-rouge">flex-basis: 200px</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">flex: 1 1 200px</code> == <code class="language-plaintext highlighter-rouge">flex-grow: 1</code> + <code class="language-plaintext highlighter-rouge">flex-shrink: 1</code>+ <code class="language-plaintext highlighter-rouge">flex-basis: 200px</code></p>
+
+<h4 id="5-内部元素的对齐方式">5 内部元素的对齐方式</h4>
+
+<h5 id="51-父容器对内部元素的控制">5.1 父容器对内部元素的控制</h5>
+
+<p>有两个可用的属性(start在横向上和纵向上分别代表左边和上面)</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">justify-content</code> 控制纵向 main-axis 方向上的排布
+    <ul>
+      <li>flex-start （默认）</li>
+      <li>flex-end</li>
+      <li>center</li>
+      <li>space-around</li>
+      <li>spece-between</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">align-items</code> 控制纵向 cross-axis 方向上的排布
+    <ul>
+      <li>stretch （默认）</li>
+      <li>center</li>
+      <li>flex-start</li>
+      <li>flex-end</li>
+    </ul>
+  </li>
+</ul>
+
+<h5 id="511-垂直方向上的控制-align-items">5.1.1 垂直方向上的控制 align-items</h5>
+
+<p>重新准备案例，回到最初的只有 <code class="language-plaintext highlighter-rouge">display: flex;</code> 的状态，只保留4个item</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.23.08.png" alt="" /></p>
+
+<p>然后给 body 和 外层container 都设置 <code class="language-plaintext highlighter-rouge">height: 100%;</code>让容器在垂直方向上撑开：</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">html</span><span class="o">,</span> <span class="nt">body</span> <span class="p">{</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">15px</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.container</span> <span class="p">{</span>
+<span class="c">/* other properties */</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.27.51.png" alt="" /></p>
+
+<p>所有子元素在cross-axis方向上被一直拉伸到了父容器底部。这是由于默认情况下父容器带有 <code class="language-plaintext highlighter-rouge">align-items: stretch</code> 属性。在容器没有被撑开且子元素很小时，这个情况不明显。</p>
+
+<p>验证这一点也可以去掉 body 和 container 的 <code class="language-plaintext highlighter-rouge">height: 100%</code> 。直接在某个item内加上大段文字：</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.34.42.png" alt="" /></p>
+
+<p>容器被撑开的同时，所有的子元素也随着拉伸。</p>
+
+<p>回到第一个例子，如果要修复，可以给父容器设置 <code class="language-plaintext highlighter-rouge">align-items: flex-start;</code></p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.39.16.png" alt="" /></p>
+
+<p>align-items: 的另外几个value的效果则很清楚了</p>
+
+<p>center 垂直居中居左</p>
+
+<p>flex-end 底部居左</p>
+
+<p>如果要单独指定某个item在垂直方向上的位置，可以使用 <code class="language-plaintext highlighter-rouge">align-self: center</code> 类似的方法。</p>
+
+<h5 id="512-横轴方向上的控制">5.1.2 横轴方向上的控制</h5>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">justify-content</code> 控制纵向 main-axis 方向上的排布
+    <ul>
+      <li>flex-start （默认）</li>
+      <li>flex-end</li>
+      <li>center</li>
+      <li>space-around</li>
+      <li>spece-between</li>
+    </ul>
+  </li>
+</ul>
+
+<p>默认情况下是居左。需要说的是后两种 spece-around 和 space-between</p>
+
+<p><code class="language-plaintext highlighter-rouge">space-between</code> 让所有子元素之间留有相同的空位。</p>
+
+<p>接上上面的例子</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+<span class="c">/* other properties */</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+  <span class="nl">align-items</span><span class="p">:</span> <span class="n">flex-start</span><span class="p">;</span>
+  <span class="nl">justify-content</span><span class="p">:</span> <span class="n">space-between</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.50.21.png" alt="" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">space-around</code> 让每一个元素的左右两边都拿到相等的空间，这会使边缘处的空间看起来只有中间的一半。</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%881.50.42.png" alt="" /></p>
+
+<h5 id="513-使用margin-leftright-auto-来调整元素排布">5.1.3 使用<code class="language-plaintext highlighter-rouge">margin-left/right: auto</code> 来调整元素排布</h5>
+
+<p>还是回到初始的靠上靠左排布。</p>
+
+<p>现在如果给 item1 单独指定 <code class="language-plaintext highlighter-rouge">margin-right: auto;</code></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">margin-right</span><span class="p">:</span> <span class="nb">auto</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%882.00.17.png" alt="" /></p>
+
+<p>item1 右边的所有 sibling 元素被排到了容器右边</p>
+
+<p>如果给 item3 指定 <code class="language-plaintext highlighter-rouge">margin-left: auto;</code></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-3</span> <span class="p">{</span>
+  <span class="nl">margin-left</span><span class="p">:</span> <span class="nb">auto</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%882.04.46.png" alt="" /></p>
+
+<p>item3 左边所有的sibling元素被排到了左边。</p>
+
+<p>原理是被指定 margin为auto一侧的其他所有元素会被排开要容器边缘。</p>
+
+<h5 id="514-使用-order-来调整元素排布">5.1.4 使用 <code class="language-plaintext highlighter-rouge">order</code> 来调整元素排布</h5>
+
+<p>先回到初始状态，全部靠上居左。</p>
+
+<p>现在给 item1 指定 <code class="language-plaintext highlighter-rouge">order: 1</code></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item-1</span> <span class="p">{</span>
+  <span class="nl">order</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-13+%E4%B8%8B%E5%8D%882.09.20.png" alt="" /></p>
+
+<p>item1 被排到了最后。</p>
+
+<p>order 的工作原理是：</p>
+
+<ul>
+  <li>默认值是0</li>
+  <li>数值越小越靠前</li>
+  <li>数值越大越靠后</li>
+</ul>
+
+<p>数值具体大小不重要，相对于其他元素的order值决定了排布顺序。比如 -1，0，1，2 和 9，99，999，9999 效果相同。</p>
+
+<h4 id="6-flex-box-规则的嵌套使用">6 flex box 规则的嵌套使用</h4>
+
+<p>flexbox 内部子元素也可以用作 flexbox 再对内部元素进行相同的规则应用。</p>
+
+<hr />
+
+<p>参考资料：</p>
+
+<p>https://scrimba.com/g/gflexbox</p>
+
+<p>https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox</p>

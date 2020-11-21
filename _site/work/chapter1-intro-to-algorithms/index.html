@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Algorithms 101 - 1 - intro to algorithms | Xullnn’s words</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Algorithms 101 - 1 - intro to algorithms" />
+<meta name="author" content="Xullnn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<meta property="og:description" content="算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容" />
+<link rel="canonical" href="http://localhost:4000/work/chapter1-intro-to-algorithms/" />
+<meta property="og:url" content="http://localhost:4000/work/chapter1-intro-to-algorithms/" />
+<meta property="og:site_name" content="Xullnn’s words" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-21T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Algorithms 101 - 1 - intro to algorithms" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@Xullnn" />
+<script type="application/ld+json">
+{"datePublished":"2018-04-21T00:00:00+08:00","headline":"Algorithms 101 - 1 - intro to algorithms","dateModified":"2018-04-21T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/work/chapter1-intro-to-algorithms/"},"url":"http://localhost:4000/work/chapter1-intro-to-algorithms/","author":{"@type":"Person","name":"Xullnn"},"description":"算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/dark.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Xullnn&#39;s words" href="/atom.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  algorithms-101-1-intro-to-algorithms">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Xullnn's words</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">You can't do much carpentry with your bare hands and you can't do much thinking with your bare brain.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Algorithms 101 - 1 - intro to algorithms
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><img src="/images/2020.jpg" class="author-avatar u-photo" alt="Xullnn"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Xullnn</span>
+      </div><ul class="author-links"><li class="author-link">
+            <a class="u-url" rel="me" href=""><i class="fas fa-link fa-lg" title=""></i></a>
+          </li></ul>
+
+<span class="read-time">3 min read</span>
+
+    <time class="page-date dt-published" datetime="2018-04-21T00:00:00+08:00"><a class="u-url" href="">April 21, 2018</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#work" title="Pages filed under Work">Work</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#algorithm" title="Pages tagged algorithm" rel="tag">algorithm</a></li><li class="page-taxonomy"><a href="/tags/#programming" title="Pages tagged programming" rel="tag">programming</a></li><li class="page-taxonomy"><a href="/tags/#reading-notes" title="Pages tagged reading notes" rel="tag">reading notes</a></li><li class="page-taxonomy"><a href="/tags/#%E7%AE%97%E6%B3%95" title="Pages tagged 算法" rel="tag">算法</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <p><em>算法入门笔记，基于《Grokking Algorithms: An illustrated guide for programmers and other curious people》这本书的内容</em></p>
+
+<h3 id="主要内容">主要内容：</h3>
+
+<ul>
+  <li>Binary search is a lot faster than simple search.    <br />
+二分法搜索比普通搜索快很多（只对于有序列表来说）</li>
+  <li>O(log n) is faster than O(n), but it gets a lot faster once the list of items you’re searching through grows.    <br />
+O(log n) 比 O(n) 快很多，在搜索对象变多时，这种优势更明显</li>
+  <li>Algorithm speed isn’t measured in seconds.    <br />
+算法的速度并不是以秒为单位衡量</li>
+  <li>Algorithm times are measured in terms of growth of an algorithm.     <br />
+算法复杂度的衡量基于计算量如何增加</li>
+  <li>Algorithm times are written in Big O notation.    <br />
+算法复杂度用 Big O notation 表示</li>
+</ul>
+
+<hr />
+
+<p>每一个代码片段都可以被称作一个 algorithm；很多常用的重要算法很可能在你所喜欢的语言中找到对应的实践；算法的选择是取舍的过程；有些问题到目前都还没有很有效的算法，只能拿到近似结果。</p>
+
+<hr />
+
+<h4 id="1-binary-search-is-a-lot-faster-than-simple-search">1 Binary search is a lot faster than simple search.</h4>
+
+<p>工作前提（重要！）： binary search 是针对 <strong>ordered list 有序列表</strong> 的搜索算法，这是谈论前提。</p>
+
+<p>假设要找到 <strong>ordered_list</strong> 中有没有 x 这个值</p>
+
+<h5 id="11-如何工作">1.1 如何工作:</h5>
+
+<ul>
+  <li>前提：list 已经做过排序</li>
+  <li>用index作为位置标记</li>
+  <li>ordered list最左边的位置是0(as l_index)，最右边的是 list.length - 1 (as h_index)</li>
+  <li>第一步猜ordered_list中间位置那个值
+    <ul>
+      <li>方法是 mid_index = (l_index + h_index) / 2，奇数相除会抹掉小数部分保留整数</li>
+      <li>用 ordered_list[mid_index] 与 x 进行比较</li>
+    </ul>
+  </li>
+  <li>基于上面的比较结果可以分成三种可能情况
+    <ul>
+      <li>1 刚好相等，那么找到了，搜索完成</li>
+      <li>2 猜测值比 x 大
+        <ul>
+          <li>将 l_index 移到 (mid_index + 1) 位置， h_index 不动，再按之前取中间值的方法猜</li>
+        </ul>
+      </li>
+      <li>3 猜测值比 x 小
+        <ul>
+          <li>将 l_index 移到 (mid_index - 1) 位置， h_index 不动，再按之前取中间值的方法猜</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>重复上面的步骤直至找到x，或者没有找到结果，完成搜索。</li>
+</ul>
+
+<h5 id="12-python代码示例">1.2 python代码示例:</h5>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">ordered_list</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+  <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">high</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+  <span class="k">while</span> <span class="n">low</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">low</span> <span class="o">+</span> <span class="n">high</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">guess</span> <span class="o">=</span> <span class="n">ordered_list</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">guess</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mid</span>
+    <span class="k">if</span> <span class="n">guess</span> <span class="o">&gt;</span> <span class="n">item</span><span class="p">:</span>
+        <span class="n">high</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="k">return</span> <span class="bp">None</span>
+
+<span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="k">print</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">my_list</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1">#=&gt; 4
+</span><span class="k">print</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">my_list</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#=&gt; None
+</span></code></pre></div></div>
+
+<p>用ruby写</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">ordered_list</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+  <span class="n">l_index</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">h_index</span> <span class="o">=</span> <span class="n">ordered_list</span><span class="p">.</span><span class="nf">length</span> <span class="o">-</span> <span class="mi">1</span>
+
+  <span class="k">while</span> <span class="n">l_index</span> <span class="o">&lt;=</span>  <span class="n">h_index</span>
+    <span class="n">mid_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">l_index</span> <span class="o">+</span> <span class="n">h_index</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">guess</span> <span class="o">=</span> <span class="n">ordered_list</span><span class="p">[</span><span class="n">mid_index</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">guess</span> <span class="o">==</span> <span class="n">item</span>
+      <span class="k">return</span> <span class="s2">"found item at index: </span><span class="si">#{</span><span class="n">mid_index</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">elsif</span> <span class="n">guess</span> <span class="o">&lt;</span> <span class="n">item</span>
+      <span class="n">l_index</span> <span class="o">=</span> <span class="n">mid_index</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">else</span>
+      <span class="n">h_index</span> <span class="o">=</span> <span class="n">mid_index</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">return</span> <span class="s2">"Not found"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><strong>代码自释疑：</strong></p>
+
+<ul>
+  <li>注意这里的 low, hight, mid 都指的是 index，而不是具体值</li>
+  <li>只有当1 找到目标值；2 low &gt; high (index)时，才会停止搜索</li>
+  <li>这也是为什么下面的每次一index移动都会+1或-1
+    <ul>
+      <li>如果不这么做，给出一个list以外的值或端点值时，搜索将在每次范围收缩到最后两个值时陷入无限循环</li>
+      <li>如果给出9
+        <ul>
+          <li>step1: i = (0+4)/2 = 2, list[2] = 5, too low, low = 2</li>
+          <li>step2: i = (2+4)/2 = 3, list[3] = 7, too low, low = 3</li>
+          <li>step3: i = (3+4)/2 = 3, list[3] = 7, too low, low = 3</li>
+          <li>step … 从上一步开始 index 就卡在3一直循环</li>
+        </ul>
+      </li>
+      <li>如果给出 -1
+        <ul>
+          <li>step1: i = (0+4)/2 = 2, list[2] = 5, too high, high = 2</li>
+          <li>step2: i = (0+2)/2 = 1, list[1] = 3, too high, high = 1</li>
+          <li>step3: i = (0 + 1)/2 = 0, list[0] = 1, too high, high= 0</li>
+          <li>step4: i = (0 + 0)/2 = 0, list[0] = 1, too high, high= 0</li>
+          <li>step … 从上一步开始 index 就卡在0一直循环</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>为什么每次 index 的 +1 和 -1 不会导致错过某个值？
+    <ul>
+      <li>首先，每次对比取的那个中点index对应的值(已经用于与目标值比较所以)已经被排除，所以</li>
+      <li>too low 时，最低index可以不落在之前的中点index上，可以向右收缩一位</li>
+      <li>too high 时，最高index可以不落在之前的中点index上，可以向左收缩一位</li>
+      <li>其次，左右端点index所在的项最终都会拿出来作比较
+        <ul>
+          <li>不管搜索多少次，最后会收缩到端点index是相邻数字，比如 2和3</li>
+          <li>因为二者相加再相除会刨去小数，拿到的会是较小的那个端点
+            <ul>
+              <li>如目标index是2，那么 (2+3)/2 = 2 搜索成功</li>
+            </ul>
+          </li>
+          <li>如果不是，那么下一步就会变成端点index都落在右边较大那个index
+            <ul>
+              <li>如目标index是3，那么 (2+3)/2 = 2 会too low，左边的index会+1，然后得到两个端点index都是3</li>
+              <li>(3+3)/2 = 3 搜索完成</li>
+            </ul>
+          </li>
+          <li>至此最后剩余的两个端点index所在的值都拿来比较过了</li>
+          <li>再下一步不管目标值是落在集合左边还是右边，左右端点index会交错，导致while loop遇到false中断</li>
+        </ul>
+      </li>
+      <li>因此端点值无论怎么搜索是被包含在搜索项中的，从上一次的中点index收缩一步，并不会错过任何项</li>
+    </ul>
+  </li>
+</ul>
+
+<p>wikipedia 上 binary search 的示意图</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/470px-Binary_Search_Depiction.svg.png" alt="" /></p>
+
+<h4 id="2-olog-n-is-faster-than-on-but-it-gets-a-lot-faster-once-the-list-of-items-youre-searching-through-grows">2 O(log n) is faster than O(n), but it gets a lot faster once the list of items you’re searching through grows.</h4>
+
+<h5 id="21-big-o-notation">2.1 Big O notation</h5>
+
+<p>Big O notation 是用来描述一个算法快慢（算法复杂度）的术语， O 指的是 operation，代表步骤或操作（不是以时间为单位）。</p>
+
+<blockquote>
+  <p>Big O notation lets you compare the number of operations. It tells you how fast the algorithm grows.</p>
+</blockquote>
+
+<p>O(n), O(logn) … 括号中的的值越大代表算法复杂度越高。</p>
+
+<p>wikipedia 上关于不同 Big O notation 随着查找对象增加，算法复杂度的增加曲线</p>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/512px-Comparison_computational_complexity.svg.png" alt="" /></p>
+
+<h5 id="22-olog-n-与-on">2.2 O(log n) 与 O(n)</h5>
+
+<p>从 含有n个对象的 ordered_list 中搜索一个值 x 是否存在</p>
+<ul>
+  <li>从头开始一个一个找算法复杂度是 O(n)</li>
+  <li>使用 binary search 搜索，算法复杂度是  O(log n)</li>
+</ul>
+
+<p>在ordered_list中对象数量较少时，算法复杂度相差不大，但随着列表中对象数量增加，binary search的优势会越来越明显。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">list中的对象数量</th>
+      <th style="text-align: center">O(n)需要的搜索次数</th>
+      <th style="text-align: center">O(log n)需要的搜索次数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">10</td>
+      <td style="text-align: center">10</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">100</td>
+      <td style="text-align: center">100</td>
+      <td style="text-align: center">7</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1 billion</td>
+      <td style="text-align: center">1 billion</td>
+      <td style="text-align: center">30</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="3-algorithm-speed-isnt-measured-in-seconds">3 Algorithm speed isn’t measured in seconds.</h4>
+
+<p>每增加一次搜索，算法复杂度 +1，等于多需要一步，每一步需要的单位时间因条件而不同。Big O notation 不是以时间作为单位。</p>
+
+<h4 id="4-traveling-salesperson-problem">4 Traveling salesperson problem</h4>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-16+%E4%B8%8B%E5%8D%884.54.55.png" alt="" /></p>
+
+<blockquote>
+  <p>This is one of the unsolved problems in computer science. There’s no fast known algorithm for it, and smart people think it’s impossible to have a smart algorithm for this problem. The best we can do is come up with an approximate solution.</p>
+</blockquote>
+
+<p>一个还没找到有效算法的问题。地图上给出若干个点，要如何用最短的路程走完所有的点。</p>
+<ul>
+  <li>如果给出4个点, 会有 4! = 24 种路线组合</li>
+  <li>如果给出6个点，会有 6! = 720 种路线组合</li>
+  <li>如果给出8个点，有 40320 种路线组合</li>
+  <li>如果给出 100 个点 …</li>
+</ul>
+
+<p><img src="https://s3-ap-southeast-1.amazonaws.com/image-for-articles/image-bucket-1/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7+2018-04-16+%E4%B8%8B%E5%8D%884.55.30.png" alt="" /></p>
+
+<h4 id="5-wikipedia-上的算法清单">5 wikipedia 上的算法清单</h4>
+
+<p>https://en.wikipedia.org/wiki/List_of_algorithms</p>
+
+<hr />
+
+<p>Recap:</p>
+
+<ul>
+  <li>Binary search is a lot faster than simple search.</li>
+  <li>O(log n) is faster than O(n), but it gets a lot faster once the list of items you’re searching through grows.</li>
+  <li>Algorithm speed isn’t measured in seconds.</li>
+  <li>Algorithm times are measured in terms of growth of an algorithm.</li>
+  <li>Algorithm times are written in Big O notation.</li>
+</ul>
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter1-intro-to-algorithms%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Algorithms+101+-+1+-+intro+to+algorithms%20http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter1-intro-to-algorithms%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter1-intro-to-algorithms%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Algorithms+101+-+1+-+intro+to+algorithms&url=http%3A%2F%2Flocalhost%3A4000%2Fwork%2Fchapter1-intro-to-algorithms%2F" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/life/power-searching/">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> Note of Power Searching
+
+      </span>
+    </a>
+  
+
+  
+    <a class="page-next" href="/work/chapter2-selection-sort/">
+      <h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">
+        Algorithms 101 - 2 - selection sort
+ <i class="fas fa-arrow-right"></i>
+      </span>
+    </a>
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="/atom.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2020 Xullnn's words. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>

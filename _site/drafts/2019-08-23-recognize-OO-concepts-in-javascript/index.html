@@ -1,0 +1,240 @@
+<h3 id="1-some-background-about-object-oriented-programming">1 Some background about Object-Oriented Programming</h3>
+
+<p>If you are familiar with the concept of OOP and have tasted one or more OO languages before. You should know a class is basically a template which can be used to create objects. And these objects can get some states and behaviors from the class they instantiated from. It’s a pretty neat concept that manifests in many OO languages.</p>
+
+<blockquote>
+  <p><strong><a href="https://en.wikipedia.org/wiki/Object-oriented_programming">Object-oriented programming (OOP)</a></strong> is a programming paradigm based on the concept of “objects”, which can contain data, in the form of fields (often known as attributes or properties), and code, in the form of procedures (often known as methods).</p>
+</blockquote>
+
+<p>But if you’ve been acquainted with classic OOP approach, then you learned OOP in Javascript, you may feel there’s something unnatural. That’s not the OOP you learned before. JavaScript proclaims that it’s a <a href="https://developer.mozilla.org/en-US/docs/Glossary/Prototype-based_programming">“prototype-based” language</a>. What is “prototypal-based”?</p>
+
+<blockquote>
+  <p><a href="https://en.wikipedia.org/wiki/Prototype-based_programming">Prototype-based programming</a> is a style of object-oriented programming in which behavior reuse (known as inheritance) is performed via a process of reusing existing objects via delegation that serve as prototypes.</p>
+</blockquote>
+
+<p>Since prototype-based programming is still <em>‘a style of object-oriented programming’</em>. So it can’t deviate too far from the basic concepts of OOP.</p>
+
+<h3 id="2-a-basic-oo-example-in-javascript">2 A basic OO example in JavaScript</h3>
+
+<p>Let’s inspect some OO code in JavaScript. Javascript can use constructor to instantiate object instances. Normally, instances get states(properties) from their constructor and get behaviors(methods) from their constructor’s prototype object – You can inspect this prototype object by retrieve the constructor’s <code class="language-plaintext highlighter-rouge">prototype</code> property.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">age</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span> <span class="c1">// state(property)</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span> <span class="c1">// state(property)</span>
+<span class="p">}</span>
+
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">act</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">act</span><span class="p">()</span> <span class="p">{</span>  <span class="c1">// behavior(method)</span>
+  <span class="kd">let</span> <span class="nx">behavior</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> is </span><span class="dl">"</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> years old and he is walking.</span><span class="dl">"</span><span class="p">;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">behavior</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// Person { act: [Function: act] }</span>
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="dl">"</span><span class="s2">Bob</span><span class="dl">"</span><span class="p">);</span> <span class="c1">// instantiation</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">act</span><span class="p">();</span> <span class="c1">// perform some behavior</span>
+<span class="c1">// logs: Bob is 18 years old and he is walking.</span>
+</code></pre></div></div>
+
+<p>First, Let us review some key terms in OOP:</p>
+<ul>
+  <li>class: a template(blueprint) which can be used to create objects(instances of that class)</li>
+  <li>instance: objects instantiated from their class by certain interface
+    <ul>
+      <li>states/attributes/properties: data held by an object</li>
+      <li>behaviors/methods: functions(procedures/code) held by an object</li>
+    </ul>
+  </li>
+  <li>instantiation: the process of creating an object from a class</li>
+</ul>
+
+<h3 id="3-same-oo-case-in-different-languages">3 Same OO case in different languages</h3>
+
+<p>Now let’s see how to do similar thing in several other languages with OO style while observing the similarities across the different cases. Basically what all the code does is:</p>
+
+<ol>
+  <li>define a <code class="language-plaintext highlighter-rouge">Person</code> class which
+    <ul>
+      <li>defines a constructor(instantiation) method to set object instances’ <code class="language-plaintext highlighter-rouge">age</code> and <code class="language-plaintext highlighter-rouge">name</code> states</li>
+      <li>defines a simple instance method <code class="language-plaintext highlighter-rouge">act</code></li>
+    </ul>
+  </li>
+  <li>instantiate a <code class="language-plaintext highlighter-rouge">Person</code> object
+    <ul>
+      <li>call <code class="language-plaintext highlighter-rouge">act</code> on the object which logs message <code class="language-plaintext highlighter-rouge">"Bob is 18 years old and he is walking."</code></li>
+    </ul>
+  </li>
+</ol>
+
+<h5 id="31-the-python-way">3.1 The Python way</h5>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">behavior</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">" is "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">age</span><span class="p">)</span> <span class="o">+</span> <span class="s">" years old and he is walking."</span><span class="p">;</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">behavior</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s">'Bob'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">act</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h5 id="32-the-ruby-way">3.2 The Ruby way</h5>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Person</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">age</span><span class="p">,</span> <span class="nb">name</span><span class="p">)</span>
+    <span class="vi">@age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span><span class="p">;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">act</span>
+    <span class="n">behavior</span> <span class="o">=</span> <span class="vi">@name</span> <span class="o">+</span> <span class="s2">" is "</span> <span class="o">+</span> <span class="vi">@age</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">+</span> <span class="s2">" years old and he is walking."</span><span class="p">;</span>
+    <span class="nb">puts</span> <span class="n">behavior</span><span class="p">;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">)</span>
+<span class="nb">p</span><span class="p">.</span><span class="nf">act</span>
+</code></pre></div></div>
+
+<h5 id="33-the-java-way">3.3 The Java way</h5>
+
+<p>This is a bit different from the previous two, but only on syntactic level.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestPerson</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span> <span class="c1">// just focus on the code below ----------------------------</span>
+      <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+      <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+      <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+      <span class="o">};</span>
+
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">act</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">behavior</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">" is "</span> <span class="o">+</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">age</span><span class="o">)</span> <span class="o">+</span> <span class="s">" years old and he is walking."</span><span class="o">;</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">behavior</span><span class="o">);</span>
+      <span class="o">};</span>
+    <span class="o">}</span>  <span class="c1">// ---------------------------------------------------------------------</span>
+
+    <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="mi">18</span><span class="o">,</span> <span class="s">"Bob"</span><span class="o">);</span>
+    <span class="n">p</span><span class="o">.</span><span class="na">act</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="4-commonalities-over-syntax-difference-in-classic-oo-model">4 Commonalities over syntax difference in classic OO model</h3>
+
+<p>Despite the syntax differences, the 3 examples from python, ruby and java are analogous to each other. If you are familiar with basic OO concepts, you’ll immediately recognize what each of the code snippet is doing. Because the OO concepts and thinking processes behind the scene are the same:</p>
+
+<ul>
+  <li>class definition go first</li>
+  <li>then objects can be instantiated from the class</li>
+</ul>
+
+<h3 id="5-searching-oo-concepts-in-javascript">5 Searching OO concepts in JavaScript</h3>
+
+<p>Here’s the Js example code again:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">age</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span> <span class="c1">// state(property)</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span> <span class="c1">// state(property)</span>
+<span class="p">}</span>
+
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">act</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">act</span><span class="p">()</span> <span class="p">{</span>  <span class="c1">// behavior(method)</span>
+  <span class="kd">let</span> <span class="nx">behavior</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> is </span><span class="dl">"</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> years old and he is walking.</span><span class="dl">"</span><span class="p">;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">behavior</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// Person { act: [Function: act] }</span>
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="dl">"</span><span class="s2">Bob</span><span class="dl">"</span><span class="p">);</span> <span class="c1">// instantiation</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">act</span><span class="p">();</span> <span class="c1">// perform some behavior</span>
+<span class="c1">// logs: Bob is 18 years old and he is walking.</span>
+</code></pre></div></div>
+
+<p>Let’s bring the basic OO concepts into this JavaScript example, see if we can find some of them.</p>
+
+<h5 id="51-constructor-and-instantiation">5.1 Constructor and instantiation</h5>
+
+<p>What is JavaScript’s counterpart of <code class="language-plaintext highlighter-rouge">__init__</code>, <code class="language-plaintext highlighter-rouge">initialize</code> method? Method name with <code class="language-plaintext highlighter-rouge">init</code>(java’s syntax is different) in it is often used as an interface to instantiate object from a class, it is usually called <em>constructor</em>.</p>
+
+<p>In Javascript, <code class="language-plaintext highlighter-rouge">Person</code> function is constructor. In fact it shares the concept behind <code class="language-plaintext highlighter-rouge">__init__</code>, <code class="language-plaintext highlighter-rouge">initialize</code>. That’s the method that will be called if we instantiate objects from the real <code class="language-plaintext highlighter-rouge">Person</code> class – no matter in python or ruby or java. Although Java’s syntax of defining constructor is similar to JavaScript’s, but in Java – like the other two languages – the constructor is defined <em>inside</em> the class.</p>
+
+<p>The most important thing to be remembered is to find <strong>the interface used to instantiate object</strong>. Whether this interface is hidden(e.g. in Ruby) or visible(e.g. in Js).</p>
+
+<h5 id="52-prototype-and-class">5.2 Prototype and class</h5>
+
+<p>According to the other 3 languages’ naming convention for a class, <code class="language-plaintext highlighter-rouge">Person</code> really looks like a class in JavaScript. Plus the syntax we instantiate <code class="language-plaintext highlighter-rouge">Person</code> object(<code class="language-plaintext highlighter-rouge">new Person(18, "Bob")</code>), it seems <code class="language-plaintext highlighter-rouge">Person</code> ought to be the class. But now we know it’s a constructor – the interface to instantiating object.</p>
+
+<p>If <code class="language-plaintext highlighter-rouge">Person</code> is not the class, who is? Back to basic concepts again, since a class is where we write shared methods in and we did this in <code class="language-plaintext highlighter-rouge">Person.prototype</code> object, so it should be the conceptual class. And indeed it is.</p>
+
+<h3 id="6-whats-the-difference-between-the-oo-model-in-js-and-in-classic-oo">6 What’s the difference between the OO model in Js and in classic OO</h3>
+
+<p>First, Javascript first has an external constructor which is used to instantiate objects, and that constructor is exposed out of the class(prototype object), then it kind of hanging a <code class="language-plaintext highlighter-rouge">prototype</code>(conceptually, a class) on that constructor.</p>
+
+<p>Second, it’s not easy to determine the meaning of “prototype” in JavaScript without context. <code class="language-plaintext highlighter-rouge">prototype</code> is a property of a constructor. The syntax <code class="language-plaintext highlighter-rouge">Person.prototype</code> makes it feels like we are calling out the prototype(class) of <code class="language-plaintext highlighter-rouge">Person</code>, but what is the real prototype(class) of <code class="language-plaintext highlighter-rouge">Person</code>?</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">Person</span><span class="p">)</span> <span class="o">===</span> <span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span> <span class="c1">// false</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">Person</span><span class="p">);</span>
+<span class="c1">// [Function]</span>
+</code></pre></div></div>
+
+<p>What makes this worse is the <code class="language-plaintext highlighter-rouge">instanceof</code> operator. In our Js example, <code class="language-plaintext highlighter-rouge">Person</code> is a constructor, but <code class="language-plaintext highlighter-rouge">new Person(18, 'Bob') instanceof Person</code> returns <code class="language-plaintext highlighter-rouge">true</code>. <code class="language-plaintext highlighter-rouge">Person</code> seems having a dual identity: 1) the interface for instantiation; 2) a fake class reflects the type of an instance</p>
+
+<blockquote>
+  <p>The <code class="language-plaintext highlighter-rouge">instanceof</code> operator tests whether the <code class="language-plaintext highlighter-rouge">prototype</code> property of a constructor appears anywhere in the prototype chain of an object.</p>
+</blockquote>
+
+<p>It checks if <code class="language-plaintext highlighter-rouge">Person.prototype</code> appears anywhere in the prototype chain of an instance. If we were allowed to call something like <code class="language-plaintext highlighter-rouge">p instanceof Person.prototype</code> where <code class="language-plaintext highlighter-rouge">p</code> is a <code class="language-plaintext highlighter-rouge">Person</code> instance, things would be more clear. Unfortunately, this syntax throws: <code class="language-plaintext highlighter-rouge">TypeError: Right-hand side of 'instanceof' is not callable</code>.</p>
+
+<h3 id="7-how-to-get-out-of-the-swamp">7 How to get out of the swamp</h3>
+
+<h5 id="71-back-to-the-basic-concepts">7.1 back to the basic concepts</h5>
+
+<p>The short answer is: <em>focus on the basic concepts and OO thinking process.</em></p>
+
+<p>Remember the commonalities of normal OO use cases are:</p>
+
+<ul>
+  <li>class defines shared behaviors(for instances)</li>
+  <li>object(instance) instantiated from class</li>
+  <li>constructor
+    <ul>
+      <li>defines states/attributes/properties for instances</li>
+      <li>is the interface to instantiate new object of a class</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Then we can do some simple logic inference in Js:</p>
+
+<p><strong>Class:</strong></p>
+
+<ul>
+  <li>constructors are functions(methods) –&gt; not objects –&gt; so they can’t be conceptual class –&gt; class is where defines shared methods –&gt; we do this in <code class="language-plaintext highlighter-rouge">Constructor.prototype</code> object –&gt; so that’s the conceptual class</li>
+</ul>
+
+<p><strong>Interface to instantiate objects:</strong></p>
+
+<p>Logically, there will be an interface to instantiate objects. This interface may present in different ways, but once we recognize it, we see through the terminology and names. No matter we call it “constructor” or “initializer”, no matter it named <code class="language-plaintext highlighter-rouge">init</code> or defined as public function, we know the purpose of its existence. Then it can become an anchor or clue to help us understand other related components.</p>
+
+<p><strong>Behavior sharing:</strong></p>
+
+<p>If we look up documentation of methods like <code class="language-plaintext highlighter-rouge">Array.prototype.map()</code>. According to the dot notation chain, we know <code class="language-plaintext highlighter-rouge">map</code> is defined as a property of <code class="language-plaintext highlighter-rouge">Array.prototype</code> object. But when we use it we can put an array instance in the front like <code class="language-plaintext highlighter-rouge">[1, 2, 3].map(...)</code>. A method defined in one object can be used by other objects which are actually instances of the former. That’s a basic use case of classic OO model. Behaviors written in <code class="language-plaintext highlighter-rouge">Array.prototype</code> are shared to all <code class="language-plaintext highlighter-rouge">Array</code> instance. If we step back further, we may even drop the term “class” for a while. Whether it’s called “class” or “prototype”, it’s just a place we can write shared behaviors.</p>
+
+<h5 id="72-think-beyond-terms">7.2 Think beyond terms</h5>
+
+<p>Terms may not make sense at all time. The term “prototype” in JavaScript may confuse us if we are not aware of the context. When we encounter the word “prototype” in JavaScript, we should slow down, examine what does “prototype” mean under the current context. But there’s one thing keeps the same – when we talk about ‘prototype’, we are talking about objects and class.</p>
+
+<h5 id="73-realize-what-causes-your-confusion">7.3 Realize what causes your confusion</h5>
+
+<p>Here I draw a simplified graph to show you a main difference between classic OO model and OO JavaScript model.</p>
+
+<p><img src="https://image-for-articles.s3-ap-southeast-1.amazonaws.com/image-bucket-1/oojs.jpg" alt="" /></p>
+
+<p>What they both share is the basic OO concepts. However, according to the graph, one big difference is the visible parts are different. Classic OO model exposes <em>classes</em> to the audience while OO JavaScript exposes <em>constructors</em> to audience. And substitution of the <code class="language-plaintext highlighter-rouge">prototype</code> object of a constructor can’t be seen if we only look at the constructor.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Often, things on the surface may confuse us, but there’s always something that can guide us – the basic concepts and thinking process. If we keep these in mind, the next time we encounter another language featured OO with prototype-based(or whatever-based) way, we are able to figure out what’re the basic concepts behind, as well as how they are applied in this language.</p>

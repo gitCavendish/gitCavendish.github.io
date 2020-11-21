@@ -1,5 +1,4 @@
 _asset_bundler_cache
-_site
 .bundle
 .DS_Store
 .jekyll-cache
@@ -13,3 +12,4 @@ Gemfile.lock
 node_modules
 npm-debug.log*
 all_posts/drafts/
+assets
