@@ -53,3 +53,35 @@ https://apprenticealf.wordpress.com/
 - 保持旧版的kindle 阅读器版本。
 - 关注插件的更新情况，通常新版会更好用或支持新的文件格式。
 - 支持正版，与其google上到处搜罗免费电子书，不如认真选书，买好书，支持作者，把更多精力用在阅读而不是淘免费书上面。
+
+
+---
+
+Update 2020.12.14
+
+昨天测试旧版Kindle现已无法在较新的MacOS上兼容，需要从appstore下载安装kindle,所以之前的解密方式也失效。
+
+安装新版kindle后，找到 'My Kindle Content' 文件夹，删除里面的文件。然后使用[插件FAQ页面](https://github.com/apprenticeharper/DeDRM_tools/blob/master/FAQs.md#macintosh)中提到的方式来禁用kindle下载KFX格式图书文件到 'My Kindle Content' 文件夹。如果使用的是 Mac, 可以在command line中执行
+
+`sudo chmod -x /Applications/Kindle.app/Contents/MacOS/renderer-test`
+
+输入系统密码确认。
+
+
+calibre 新版本 5.7.2
+- https://calibre-ebook.com/download_osx
+
+插件新版本 v7.0.0b4， 要求 calibre 版本 > 5
+
+- https://apprenticealf.wordpress.com/
+- https://github.com/apprenticeharper/DeDRM_tools/releases/tag/7.0.0b4
+
+安装好之后重开calibre和kindle.
+
+该方法目前测试有效。
+
+- Mac OS Big Sur v11.01
+- calibre 5.7.2
+- kindle 1.30.0(59057)
+  - kindle 此版本在本机存在闪退但不影响图书下载
+
