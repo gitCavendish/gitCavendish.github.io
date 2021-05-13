@@ -85,3 +85,20 @@ calibre 新版本 5.7.2
 - kindle 1.30.0(59057)
   - kindle 此版本在本机存在闪退但不影响图书下载
 
+
+---
+
+Update 2021.05.13
+
+kindle.app 升级至 `1.31.0(60176)` 后无法破解
+
+操作步骤
+
+- [更新calibre](https://calibre-ebook.com/)
+- [下载新版插件](https://apprenticealf.wordpress.com/)
+- 找到 'My Kindle Content' 文件夹，删除里面的文件。然后使用[插件FAQ页面](https://github.com/apprenticeharper/DeDRM_tools/blob/master/FAQs.md#macintosh)中提到的方式来禁用kindle下载KFX格式图书文件
+- 在calibre中安装插件
+  - preferences 面板最下面找到 Advanced 中的 plugin 项点进去
+  - 点击右下方 load plugin from file, 选中插件解压包中的DeDRM_plugin.zip 文件， 确认安装
+- 重新打开kindle.app 下载图书到本地
+  - 从 'My Kindle Content' 中找到下载的图书文件用calibre可以顺利打开
