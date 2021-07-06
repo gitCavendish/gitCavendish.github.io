@@ -124,7 +124,15 @@ Module {
 }
 ```
 
-First on the top there's the `Module`. This indicates `module` in the current file is an instance of a class called `Module`. So for each module file, new `Module` instance will be created instead of using a global `module` object that can be rewritten everywhere in the project.
+First on the top there's the `Module`. This indicates `module` in the current file is an instance of a class called `Module`. We can check this in `Node`:
+
+```js
+module.constructor.name
+
+// => 'Module'
+```
+
+So for each module file, new `Module` instance will be created instead of using a global `module` object that can be rewritten everywhere in the project.
 
 When we import a module by using `const objectA = require(./path/to/module_file)`, this line only imports the `module.exports` object specific to the file being exported.
 
